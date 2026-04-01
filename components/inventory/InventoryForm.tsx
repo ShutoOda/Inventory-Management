@@ -168,7 +168,7 @@ export default function InventoryForm({ mode, product }: Props) {
       if (result.success && result.id) {
         // 同じ画面に留まりつつ、登録したデータを編集モードで表示
         setSavedId(result.id)
-        setNotice('登録しました')
+        setNotice('正常に登録されました')
       } else {
         setError(result.error ?? '登録に失敗しました')
       }
