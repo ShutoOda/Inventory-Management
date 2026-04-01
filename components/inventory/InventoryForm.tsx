@@ -151,7 +151,8 @@ export default function InventoryForm({ mode, product }: Props) {
     if (dated.length === 0) return true
     const latest = dated[dated.length - 1]
     if (latest.total < 0) {
-      setError(`総数がマイナスになっています（${latest.date}時点の総数: ${latest.total.toLocaleString('ja-JP')}）。在庫情報を確認してください。`)
+      const rowNumber = displayRows.indexOf(latest) + 1
+      setError(`${rowNumber}行目の総数がマイナスになっています。在庫情報を確認してください。`)
       return false
     }
     return true
