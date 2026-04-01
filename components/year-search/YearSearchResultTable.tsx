@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import type { YearSearchResultItem } from '@/actions/yearSearch'
 
 export default function YearSearchResultTable({ items }: { items: YearSearchResultItem[] }) {
@@ -19,7 +18,6 @@ export default function YearSearchResultTable({ items }: { items: YearSearchResu
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 whitespace-nowrap">製品名</th>
             <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 whitespace-nowrap">総数</th>
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 whitespace-nowrap">状況</th>
-            <th className="px-4 py-3" />
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white">
@@ -32,14 +30,6 @@ export default function YearSearchResultTable({ items }: { items: YearSearchResu
               </td>
               <td className="px-4 py-3 text-sm text-gray-600">
                 {item.condition === '自由入力' ? (item.condition_text || '自由入力') : item.condition}
-              </td>
-              <td className="px-4 py-3 text-right whitespace-nowrap">
-                <Link
-                  href={`/inventory?id=${item.product_id}`}
-                  className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700"
-                >
-                  詳細・編集
-                </Link>
               </td>
             </tr>
           ))}
