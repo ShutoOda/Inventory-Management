@@ -146,7 +146,19 @@ export default function InventoryForm({ mode, product }: Props) {
     }))
   }
 
+  function validateTotal(): boolean {
+    const dated = displayRows.filter(r => r.date)
+    if (dated.length === 0) return true
+    const latest = dated[dated.length - 1]
+    if (latest.total < 0) {
+      setError(`総数がマイナスになっています（${latest.date}時点の総数: ${latest.total.toLocaleString('ja-JP')}）。在庫情報を確認してください。`)
+      return false
+    }
+    return true
+  }
+
   function handleCreate() {
+    if (!validateTotal()) return
     setPendingAction('create')
     startTransition(async () => {
       setError(null)
@@ -165,6 +177,7 @@ export default function InventoryForm({ mode, product }: Props) {
 
   function handleUpdate() {
     if (!currentId) return
+    if (!validateTotal()) return
     setPendingAction('update')
     startTransition(async () => {
       setError(null)
