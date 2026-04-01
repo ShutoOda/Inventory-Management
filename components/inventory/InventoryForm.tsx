@@ -119,7 +119,7 @@ export default function InventoryForm({ mode, product }: Props) {
 
   function addRow() {
     setRows(prev => [...prev, {
-      clientId: newClientId(), date: '', status: '+', quantity: '',
+      clientId: newClientId(), date: '', status: '-', quantity: '',
       ng: '', total: 0, condition: '未検', conditionText: '', memo: '',
     }])
   }
