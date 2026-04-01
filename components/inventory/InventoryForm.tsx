@@ -237,11 +237,10 @@ export default function InventoryForm({ mode, product }: Props) {
             </label>
             <input
               type="text"
-              inputMode="numeric"
               value={codeNumber}
-              onChange={e => setCodeNumber(toDigits(e.target.value))}
+              onChange={e => setCodeNumber(e.target.value.replace(/[^\d-]/g, ''))}
               disabled={allDisabled}
-              placeholder="半角数字のみ"
+              placeholder="半角数字・ハイフン"
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
             />
           </div>
@@ -294,7 +293,7 @@ export default function InventoryForm({ mode, product }: Props) {
                 <th className="border-b border-gray-200 px-2 py-2 text-right text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>NG</th>
                 <th className="border-b border-gray-200 bg-blue-50 px-2 py-2 text-right text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>総数</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 110 }}>状況</th>
-                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 540 }}>自由入力</th>
+                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 270 }}>自由入力</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 540 }}>メモ</th>
               </tr>
             </thead>

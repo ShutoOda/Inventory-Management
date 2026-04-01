@@ -67,10 +67,9 @@ export default function SearchBar() {
           <label className="block text-sm font-medium text-gray-700">コード番号</label>
           <input
             type="text"
-            inputMode="numeric"
             value={codeNumber}
-            onChange={e => setCodeNumber(e.target.value.replace(/[^\d]/g, ''))}
-            placeholder="半角数字のみ"
+            onChange={e => setCodeNumber(e.target.value.replace(/[^\d-]/g, ''))}
+            placeholder="半角数字・ハイフン"
             className={inputClass}
           />
         </div>

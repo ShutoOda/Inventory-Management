@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(supabase --version)",
+      "Bash(supabase status:*)",
+      "Bash(supabase projects:*)",
+      "Bash(supabase db:*)",
+      "Bash(npx supabase:*)",
+      "Bash(npx vercel:*)",
+      "Bash(printf 'inventory-management\\\\n')"
+    ]
+  }
+}

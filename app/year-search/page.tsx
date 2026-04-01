@@ -4,6 +4,7 @@ import { searchByYear } from '@/actions/yearSearch'
 import { SEARCH_PAGE_SIZE } from '@/lib/constants'
 import YearSearchBar from '@/components/year-search/YearSearchBar'
 import YearSearchResultTable from '@/components/year-search/YearSearchResultTable'
+import YearSearchExportButton from '@/components/year-search/YearSearchExportButton'
 import Pagination from '@/components/search/Pagination'
 
 type PageProps = {
@@ -45,11 +46,14 @@ export default async function YearSearchPage({ searchParams }: PageProps) {
         <div className="rounded-lg bg-white shadow-sm">
           <div className="border-b border-gray-200 px-4 py-3 flex items-center justify-between">
             <span className="text-sm text-gray-600">{total} 件</span>
-            {totalPages > 1 && (
-              <span className="text-sm text-gray-500">
-                {currentPage} / {totalPages} ページ
-              </span>
-            )}
+            <div className="flex items-center gap-4">
+              {totalPages > 1 && (
+                <span className="text-sm text-gray-500">
+                  {currentPage} / {totalPages} ページ
+                </span>
+              )}
+              <YearSearchExportButton year={year} disabled={total === 0} />
+            </div>
           </div>
           <YearSearchResultTable items={items} />
           <Pagination
