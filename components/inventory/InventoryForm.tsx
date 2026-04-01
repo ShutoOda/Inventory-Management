@@ -161,13 +161,12 @@ export default function InventoryForm({ mode, product }: Props) {
 
   function handleCreate() {
     if (!validateTotal()) return
+    setError(null)
+    setNotice(null)
     setPendingAction('create')
     startTransition(async () => {
-      setError(null)
-      setNotice(null)
       const result = await createProduct(name, codeNumber, storageLocation, buildRecords())
       if (result.success && result.id) {
-        // 同じ画面に留まりつつ、登録したデータを編集モードで表示
         setSavedId(result.id)
         setNotice('正常に登録されました')
       } else {
@@ -180,14 +179,13 @@ export default function InventoryForm({ mode, product }: Props) {
   function handleUpdate() {
     if (!currentId) return
     if (!validateTotal()) return
+    setError(null)
+    setNotice(null)
     setPendingAction('update')
     startTransition(async () => {
-      setError(null)
-      setNotice(null)
       const result = await updateProduct(currentId, name, codeNumber, storageLocation, buildRecords())
       if (result.success) {
         setNotice('更新しました')
-        router.refresh() // サーバー側のキャッシュを更新
       } else {
         setError(result.error ?? '更新に失敗しました')
       }
@@ -198,10 +196,10 @@ export default function InventoryForm({ mode, product }: Props) {
   function handleDelete() {
     if (!currentId) return
     if (!window.confirm('この製品データ（在庫情報含む）を削除しますか？この操作は元に戻せません。')) return
+    setError(null)
+    setNotice(null)
     setPendingAction('delete')
     startTransition(async () => {
-      setError(null)
-      setNotice(null)
       const result = await deleteProduct(currentId)
       if (result.success) {
         setDeleted(true)
@@ -356,6 +354,7 @@ export default function InventoryForm({ mode, product }: Props) {
                     </td>
                     <td className="px-1 py-1">
                       <input type="text" readOnly value={formatTotal(row.total)} tabIndex={-1}
+                        disabled={allDisabled}
                         className={`${cellInput} text-right cursor-default`} />
                     </td>
                     <td className="px-1 py-1">
