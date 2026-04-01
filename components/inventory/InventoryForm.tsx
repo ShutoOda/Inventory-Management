@@ -152,6 +152,7 @@ export default function InventoryForm({ mode, product }: Props) {
     const latest = dated[dated.length - 1]
     if (latest.total < 0) {
       const rowNumber = displayRows.indexOf(latest) + 1
+      setNotice(null)
       setError(`${rowNumber}行目の総数がマイナスになっています。在庫情報を確認してください。`)
       return false
     }
