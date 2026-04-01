@@ -283,11 +283,11 @@ export default function InventoryForm({ mode, product }: Props) {
           </div>
         </div>
 
-        <div className="rounded-md border border-gray-200" style={{ overflow: 'auto', WebkitOverflowScrolling: 'touch', touchAction: 'pan-x pan-y', maxHeight: '384px', maxWidth: '100%' } as React.CSSProperties}>
-          <table className="border-collapse text-sm" style={{ minWidth: 900 }}>
+        <div className="rounded-md border border-gray-200" style={{ overflowX: 'auto', overflowY: 'auto', WebkitOverflowScrolling: 'touch', maxHeight: '384px' } as React.CSSProperties}>
+          <table className="border-collapse text-sm" style={{ minWidth: 860 }}>
             <thead>
               <tr className="bg-gray-50">
-                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>日付</th>
+                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 80 }}>日付</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>入出庫</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-right text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>数量</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-right text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>NG</th>
@@ -314,7 +314,8 @@ export default function InventoryForm({ mode, product }: Props) {
                     <td className="px-1 py-1">
                       <input type="date" value={row.date}
                         onChange={e => updateRow(row.clientId, 'date', e.target.value)}
-                        disabled={allDisabled} className={cellInput} />
+                        disabled={allDisabled} className={cellInput}
+                        style={{ WebkitAppearance: 'none', appearance: 'none', minWidth: 0 } as React.CSSProperties} />
                     </td>
                     <td className="px-1 py-1">
                       <select value={row.status}
