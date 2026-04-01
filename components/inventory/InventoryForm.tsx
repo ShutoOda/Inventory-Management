@@ -291,7 +291,7 @@ export default function InventoryForm({ mode, product }: Props) {
                 <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>入出庫</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-right text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>数量</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-right text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>NG</th>
-                <th className="border-b border-gray-200 bg-blue-50 px-2 py-2 text-right text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>総数</th>
+                <th className="border-b border-gray-200 px-2 py-2 text-right text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>総数</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 110 }}>状況</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 270 }}>自由入力</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 540 }}>メモ</th>
@@ -336,12 +336,12 @@ export default function InventoryForm({ mode, product }: Props) {
                         value={row.status === '+' ? '' : formatNum(row.ng)}
                         onChange={e => updateRow(row.clientId, 'ng', toDigits(e.target.value))}
                         disabled={allDisabled || row.status === '+'}
-                        placeholder={row.status === '+' ? '－' : ''}
+                        placeholder=""
                         className={`${cellInput} text-right`} />
                     </td>
-                    <td className="bg-blue-50 px-1 py-1">
+                    <td className="px-1 py-1">
                       <input type="text" readOnly value={formatTotal(row.total)} tabIndex={-1}
-                        className="block w-full rounded border border-blue-200 bg-blue-50 px-1.5 py-1 text-right text-sm font-medium text-blue-900 focus:outline-none cursor-default" />
+                        className={`${cellInput} text-right cursor-default`} />
                     </td>
                     <td className="px-1 py-1">
                       <select value={row.condition}
