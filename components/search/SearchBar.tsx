@@ -2,104 +2,127 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
+import Link from 'next/link'
 
 export default function SearchBar() {
   const router = useRouter()
-  const searchParams = useSearchParams()
+  const sp = useSearchParams()
 
-  const [values, setValues] = useState({
-    keyword: searchParams.get('keyword') ?? '',
-    category: searchParams.get('category') ?? '',
-    minQuantity: searchParams.get('minQuantity') ?? '',
-    maxQuantity: searchParams.get('maxQuantity') ?? '',
-  })
+  const [date, setDate] = useState(sp.get('date') ?? '')
+  const [name, setName] = useState(sp.get('name') ?? '')
+  const [codeNumber, setCodeNumber] = useState(sp.get('code_number') ?? '')
+  const [storageLocation, setStorageLocation] = useState(sp.get('storage_location') ?? '')
+  const [memo, setMemo] = useState(sp.get('memo') ?? '')
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }))
-  }
-
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
+  function buildParams() {
     const params = new URLSearchParams()
     params.set('searched', 'true')
-    for (const [key, value] of Object.entries(values)) {
-      if (value) params.set(key, value)
-    }
-    router.push(`/search?${params.toString()}`)
+    if (date) params.set('date', date)
+    if (name) params.set('name', name)
+    if (codeNumber) params.set('code_number', codeNumber)
+    if (storageLocation) params.set('storage_location', storageLocation)
+    if (memo) params.set('memo', memo)
+    return params
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    router.push(`/search?${buildParams().toString()}`)
   }
 
   function handleReset() {
-    setValues({ keyword: '', category: '', minQuantity: '', maxQuantity: '' })
+    setDate('')
+    setName('')
+    setCodeNumber('')
+    setStorageLocation('')
+    setMemo('')
     router.push('/search')
   }
 
-  const inputClass = 'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
+  const inputClass =
+    'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-gray-700">キーワード</label>
+          <label className="block text-sm font-medium text-gray-700">日付</label>
+          <input
+            type="date"
+            value={date}
+            onChange={e => setDate(e.target.value)}
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">製品名</label>
           <input
             type="text"
-            name="keyword"
-            value={values.keyword}
-            onChange={handleChange}
-            placeholder="商品名・カテゴリ・説明"
+            value={name}
+            onChange={e => setName(e.target.value)}
             className={inputClass}
           />
         </div>
-
         <div>
-          <label className="block text-sm font-medium text-gray-700">カテゴリ</label>
+          <label className="block text-sm font-medium text-gray-700">コード番号</label>
           <input
             type="text"
-            name="category"
-            value={values.category}
-            onChange={handleChange}
-            placeholder="カテゴリで絞り込み"
+            inputMode="numeric"
+            value={codeNumber}
+            onChange={e => setCodeNumber(e.target.value.replace(/[^\d]/g, ''))}
+            placeholder="半角数字のみ"
             className={inputClass}
           />
         </div>
-
         <div>
-          <label className="block text-sm font-medium text-gray-700">数量（最小）</label>
+          <label className="block text-sm font-medium text-gray-700">保管場所</label>
           <input
-            type="number"
-            name="minQuantity"
-            value={values.minQuantity}
-            onChange={handleChange}
-            min="0"
+            type="text"
+            value={storageLocation}
+            onChange={e => setStorageLocation(e.target.value)}
             className={inputClass}
           />
         </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">数量（最大）</label>
+        <div className="sm:col-span-2">
+          <label className="block text-sm font-medium text-gray-700">メモ</label>
           <input
-            type="number"
-            name="maxQuantity"
-            value={values.maxQuantity}
-            onChange={handleChange}
-            min="0"
+            type="text"
+            value={memo}
+            onChange={e => setMemo(e.target.value)}
             className={inputClass}
           />
         </div>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-t border-gray-200 pt-4">
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={handleReset}
+            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            リセット
+          </button>
+          <Link
+            href="/inventory"
+            className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+          >
+            新規追加
+          </Link>
+          <button
+            type="submit"
+            name="mode"
+            value="year"
+            className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+          >
+            製品在庫年度検索
+          </button>
+        </div>
         <button
           type="submit"
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 sm:self-auto"
         >
           検索
-        </button>
-        <button
-          type="button"
-          onClick={handleReset}
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
-          リセット
         </button>
       </div>
     </form>
