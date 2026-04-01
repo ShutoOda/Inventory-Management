@@ -213,8 +213,8 @@ export default function InventoryForm({ mode, product }: Props) {
   return (
     <div className="space-y-6 min-w-0 w-full">
       {deleted && (
-        <div className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700 font-medium">
-          削除しました。このデータは削除済みです。
+        <div className="rounded-md bg-green-50 border border-green-200 p-3 text-sm text-green-700 font-medium">
+          正常に削除されました。
         </div>
       )}
       {notice && !deleted && (
