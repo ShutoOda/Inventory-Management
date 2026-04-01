@@ -105,7 +105,7 @@ export default function InventoryForm({ mode, product }: Props) {
   const allDisabled = deleted || isPending
 
   // 編集モードで製品が存在しない（削除済みでもない）場合はエラー表示
-  if (mode === 'edit' && !product && !deleted && !savedId) {
+  if (mode === 'edit' && !product && !deleted && !savedId && pendingAction !== 'delete') {
     return (
       <div className="rounded-md bg-red-50 border border-red-200 p-4 text-sm text-red-700">
         データが見つかりません。削除されたか、URLが正しくない可能性があります。
