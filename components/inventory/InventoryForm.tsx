@@ -260,7 +260,7 @@ export default function InventoryForm({ mode, product }: Props) {
       </section>
 
       {/* ━━ 在庫情報 ━━ */}
-      <section>
+      <section style={{ minWidth: 0, overflow: 'hidden' }}>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 pb-2">
           <h3 className="text-sm font-semibold text-gray-700">在庫情報</h3>
           <div className="flex gap-2">
@@ -283,7 +283,7 @@ export default function InventoryForm({ mode, product }: Props) {
           </div>
         </div>
 
-        <div className="overflow-auto rounded-md border border-gray-200 max-h-96 w-full" style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
+        <div className="rounded-md border border-gray-200" style={{ overflowX: 'scroll', overflowY: 'auto', WebkitOverflowScrolling: 'touch', maxHeight: '384px', width: '100%' } as React.CSSProperties}>
           <table className="border-collapse text-sm" style={{ minWidth: 900 }}>
             <thead>
               <tr className="bg-gray-50">
