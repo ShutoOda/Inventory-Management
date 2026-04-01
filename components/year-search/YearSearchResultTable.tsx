@@ -11,10 +11,11 @@ export default function YearSearchResultTable({ items }: { items: YearSearchResu
 
   return (
     <div className="overflow-auto max-h-[480px]" style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
-      <table className="w-full divide-y divide-gray-200" style={{ minWidth: 500 }}>
+      <table className="w-full divide-y divide-gray-200" style={{ minWidth: 620 }}>
         <thead className="bg-gray-50 sticky top-0 z-10">
           <tr>
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 whitespace-nowrap">日付</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 whitespace-nowrap">コード番号</th>
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 whitespace-nowrap">製品名</th>
             <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 whitespace-nowrap">総数</th>
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 whitespace-nowrap">状況</th>
@@ -24,6 +25,7 @@ export default function YearSearchResultTable({ items }: { items: YearSearchResu
           {items.map(item => (
             <tr key={item.product_id} className="hover:bg-gray-50">
               <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">{item.date}</td>
+              <td className="px-4 py-3 text-sm text-gray-600 font-mono whitespace-nowrap">{item.code_number}</td>
               <td className="px-4 py-3 text-sm font-medium text-gray-900">{item.product_name}</td>
               <td className="px-4 py-3 text-sm text-gray-600 text-right">
                 {item.total.toLocaleString('ja-JP')}

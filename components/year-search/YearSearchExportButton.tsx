@@ -24,6 +24,7 @@ export default function YearSearchExportButton({ year, disabled }: Props) {
       const rows = items.map(item => `
         <tr>
           <td>${item.date}</td>
+          <td>${item.code_number}</td>
           <td>${item.product_name}</td>
           <td style="text-align:right">${item.total.toLocaleString('ja-JP')}</td>
           <td>${conditionLabel(item.condition, item.condition_text)}</td>
@@ -42,7 +43,7 @@ export default function YearSearchExportButton({ year, disabled }: Props) {
     table { width: 100%; border-collapse: collapse; }
     th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
     th { background: #f0f0f0; font-weight: bold; }
-    td:nth-child(3) { text-align: right; }
+    td:nth-child(4) { text-align: right; }
     @media print { body { margin: 10mm; } }
   </style>
 </head>
@@ -53,6 +54,7 @@ export default function YearSearchExportButton({ year, disabled }: Props) {
     <thead>
       <tr>
         <th>日付</th>
+        <th>コード番号</th>
         <th>製品名</th>
         <th>総数</th>
         <th>状況</th>

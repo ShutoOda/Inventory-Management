@@ -6,6 +6,7 @@ import { SEARCH_PAGE_SIZE } from '@/lib/constants'
 export type YearSearchResultItem = {
   product_id: string
   product_name: string
+  code_number: string
   date: string
   total: number
   condition: string
@@ -26,7 +27,7 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
 
   const { data, error } = await supabase
     .from('products')
-    .select('id, name, stock_records(date, total, condition, condition_text)')
+    .select('id, name, code_number, stock_records(date, total, condition, condition_text)')
     .order('name', { ascending: true })
 
   if (error) return []
@@ -34,6 +35,7 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
   type Row = {
     id: string
     name: string
+    code_number: string
     stock_records: {
       date: string | null
       total: number
@@ -57,6 +59,7 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
     results.push({
       product_id: product.id,
       product_name: product.name,
+      code_number: product.code_number,
       date: latest.date!,
       total: latest.total,
       condition: latest.condition,

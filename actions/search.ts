@@ -9,7 +9,6 @@ export async function searchInventory(params: SearchParams): Promise<SearchResul
   let query = supabase
     .from('products')
     .select('*, stock_records(date, memo)')
-    .order('code_number', { ascending: true })
     .order('name', { ascending: true })
 
   if (params.name) {

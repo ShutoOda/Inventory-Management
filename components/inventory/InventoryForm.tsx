@@ -198,7 +198,7 @@ export default function InventoryForm({ mode, product }: Props) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 min-w-0 w-full">
       {deleted && (
         <div className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700 font-medium">
           削除しました。このデータは削除済みです。
@@ -219,7 +219,7 @@ export default function InventoryForm({ mode, product }: Props) {
       <section>
         <h3 className="mb-3 border-b border-gray-200 pb-2 text-sm font-semibold text-gray-700">基本情報</h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
+          <div className="min-w-0 overflow-hidden">
             <label className="block text-sm font-medium text-gray-700">
               製品名 <span className="text-red-500">*</span>
             </label>
@@ -231,7 +231,7 @@ export default function InventoryForm({ mode, product }: Props) {
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
             />
           </div>
-          <div>
+          <div className="min-w-0 overflow-hidden">
             <label className="block text-sm font-medium text-gray-700">
               コード番号 <span className="text-red-500">*</span>
             </label>
@@ -283,7 +283,7 @@ export default function InventoryForm({ mode, product }: Props) {
           </div>
         </div>
 
-        <div className="overflow-auto rounded-md border border-gray-200 max-h-96" style={{ WebkitOverflowScrolling: 'touch' }}>
+        <div className="overflow-auto rounded-md border border-gray-200 max-h-96 w-full" style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
           <table className="border-collapse text-sm" style={{ minWidth: 900 }}>
             <thead>
               <tr className="bg-gray-50">
