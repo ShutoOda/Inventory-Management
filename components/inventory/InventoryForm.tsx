@@ -260,7 +260,7 @@ export default function InventoryForm({ mode, product }: Props) {
       </section>
 
       {/* ━━ 在庫情報 ━━ */}
-      <section style={{ minWidth: 0, overflow: 'hidden' }}>
+      <section style={{ minWidth: 0 }}>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 pb-2">
           <h3 className="text-sm font-semibold text-gray-700">在庫情報</h3>
           <div className="flex gap-2">
@@ -283,11 +283,11 @@ export default function InventoryForm({ mode, product }: Props) {
           </div>
         </div>
 
-        <div className="rounded-md border border-gray-200" style={{ overflowX: 'scroll', overflowY: 'auto', WebkitOverflowScrolling: 'touch', maxHeight: '384px', width: '100%' } as React.CSSProperties}>
+        <div className="rounded-md border border-gray-200" style={{ overflow: 'auto', WebkitOverflowScrolling: 'touch', touchAction: 'pan-x pan-y', maxHeight: '384px', maxWidth: '100%' } as React.CSSProperties}>
           <table className="border-collapse text-sm" style={{ minWidth: 900 }}>
             <thead>
               <tr className="bg-gray-50">
-                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 130 }}>日付</th>
+                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>日付</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>入出庫</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-right text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>数量</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-right text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>NG</th>

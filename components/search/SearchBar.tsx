@@ -52,7 +52,7 @@ export default function SearchBar() {
             value={date}
             onChange={e => setDate(e.target.value)}
             className={inputClass}
-            style={{ maxWidth: '100%' }}
+            style={{ WebkitAppearance: 'none', appearance: 'none', width: '100%' } as React.CSSProperties}
           />
         </div>
         <div className="min-w-0 overflow-hidden">
