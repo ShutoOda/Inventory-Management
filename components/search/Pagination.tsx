@@ -4,15 +4,16 @@ type Props = {
   currentPage: number
   totalPages: number
   searchParamsString: string
+  basePath?: string
 }
 
-export default function Pagination({ currentPage, totalPages, searchParamsString }: Props) {
+export default function Pagination({ currentPage, totalPages, searchParamsString, basePath = '/search' }: Props) {
   if (totalPages <= 1) return null
 
   function pageUrl(page: number) {
     const params = new URLSearchParams(searchParamsString)
     params.set('page', String(page))
-    return `/search?${params.toString()}`
+    return `${basePath}?${params.toString()}`
   }
 
   const pages: (number | '...')[] = []

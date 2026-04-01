@@ -109,14 +109,12 @@ export default function SearchBar() {
           >
             新規追加
           </Link>
-          <button
-            type="submit"
-            name="mode"
-            value="year"
+          <Link
+            href="/year-search"
             className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
           >
             製品在庫年度検索
-          </button>
+          </Link>
         </div>
         <button
           type="submit"
