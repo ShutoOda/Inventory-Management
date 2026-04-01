@@ -284,8 +284,8 @@ export default function InventoryForm({ mode, product }: Props) {
           </div>
         </div>
 
-        <div className="overflow-auto rounded-md border border-gray-200 max-h-96">
-          <table className="min-w-full border-collapse text-sm">
+        <div className="overflow-auto rounded-md border border-gray-200 max-h-96" style={{ WebkitOverflowScrolling: 'touch' }}>
+          <table className="border-collapse text-sm" style={{ minWidth: 900 }}>
             <thead>
               <tr className="bg-gray-50">
                 <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 130 }}>日付</th>

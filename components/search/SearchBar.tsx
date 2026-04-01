@@ -45,7 +45,7 @@ export default function SearchBar() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div>
+        <div className="min-w-0">
           <label className="block text-sm font-medium text-gray-700">日付</label>
           <input
             type="date"
@@ -54,7 +54,7 @@ export default function SearchBar() {
             className={inputClass}
           />
         </div>
-        <div>
+        <div className="min-w-0">
           <label className="block text-sm font-medium text-gray-700">製品名</label>
           <input
             type="text"
@@ -63,7 +63,7 @@ export default function SearchBar() {
             className={inputClass}
           />
         </div>
-        <div>
+        <div className="min-w-0">
           <label className="block text-sm font-medium text-gray-700">コード番号</label>
           <input
             type="text"
@@ -74,7 +74,7 @@ export default function SearchBar() {
             className={inputClass}
           />
         </div>
-        <div>
+        <div className="min-w-0">
           <label className="block text-sm font-medium text-gray-700">保管場所</label>
           <input
             type="text"
@@ -83,7 +83,7 @@ export default function SearchBar() {
             className={inputClass}
           />
         </div>
-        <div className="sm:col-span-2">
+        <div className="min-w-0 sm:col-span-2">
           <label className="block text-sm font-medium text-gray-700">メモ</label>
           <input
             type="text"
