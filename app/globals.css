@@ -24,3 +24,11 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Hide Vercel toolbar in preview deployments */
+vercel-toolbar,
+#vercel-toolbar,
+[data-vercel-toolbar],
+nextjs-portal {
+  display: none !important;
+}
