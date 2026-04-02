@@ -447,7 +447,12 @@ export default function InventoryForm({ mode, product }: Props) {
                     <td className="px-1 py-1">
                       <input type="text" value={row.memo}
                         onChange={e => updateRow(row.clientId, 'memo', e.target.value)}
-                        disabled={allDisabled} className={cellInput} />
+                        disabled={allDisabled} className={cellInput}
+                        title={row.memo || undefined}
+                        onPointerDown={e => startLongPress(row.memo, e)}
+                        onPointerUp={cancelLongPress}
+                        onPointerLeave={cancelLongPress}
+                        onPointerCancel={cancelLongPress} />
                     </td>
                   </tr>
                 ))
