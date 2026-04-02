@@ -322,8 +322,8 @@ export default function InventoryForm({ mode, product }: Props) {
                 <th className="border-b border-gray-200 px-2 py-2 text-right text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>NG</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-right text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>総数</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 110 }}>状況</th>
-                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 270 }}>仕掛</th>
-                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 540 }}>メモ</th>
+                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 110 }}>仕掛</th>
+                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 270 }}>メモ</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -401,7 +401,8 @@ export default function InventoryForm({ mode, product }: Props) {
                     <td className="px-1 py-1">
                       <input type="text" value={row.shikake}
                         onChange={e => updateRow(row.clientId, 'shikake', e.target.value)}
-                        disabled={allDisabled} className={cellInput} />
+                        disabled={allDisabled} className={cellInput}
+                        title={row.shikake || undefined} />
                     </td>
                     <td className="px-1 py-1">
                       <input type="text" value={row.memo}
