@@ -374,8 +374,10 @@ export default function InventoryForm({ mode, product }: Props) {
                   <tr
                     key={row.clientId}
                     onClick={() => !allDisabled && setSelectedRowId(row.clientId)}
-                    className={`cursor-pointer ${selectedRowId === row.clientId ? '' : 'hover:bg-gray-50'}`}
-                    style={selectedRowId === row.clientId ? { boxShadow: 'inset 0 0 0 2px #60a5fa' } : undefined}
+                    className="cursor-pointer"
+                    style={selectedRowId === row.clientId
+                      ? { boxShadow: 'inset 0 0 0 2px #60a5fa' }
+                      : { backgroundColor: displayRows.indexOf(row) % 2 === 0 ? '#fff0f3' : '#ffffff' }}
                   >
                     <td className="px-1 py-1">
                       <input type="date" value={row.date}
