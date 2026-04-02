@@ -28,6 +28,7 @@ export default function YearSearchExportButton({ year, disabled }: Props) {
           <td>${item.product_name}</td>
           <td style="text-align:right">${item.total.toLocaleString('ja-JP')}</td>
           <td>${conditionLabel(item.condition, item.condition_text)}</td>
+          <td>${item.shikake ?? ''}</td>
         </tr>
       `).join('')
 
@@ -58,6 +59,7 @@ export default function YearSearchExportButton({ year, disabled }: Props) {
         <th>製品名</th>
         <th>総数</th>
         <th>状況</th>
+        <th>仕掛</th>
       </tr>
     </thead>
     <tbody>${rows}</tbody>
