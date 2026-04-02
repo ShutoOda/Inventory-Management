@@ -266,7 +266,7 @@ export default function InventoryForm({ mode, product }: Props) {
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
             />
           </div>
-          <div className="sm:col-span-2">
+          <div>
             <label className="block text-sm font-medium text-gray-700">
               保管場所 <span className="text-red-500">*</span>
             </label>
@@ -421,7 +421,7 @@ export default function InventoryForm({ mode, product }: Props) {
         </button>
         <button type="button" onClick={handleUpdate}
           disabled={!isEdit || allDisabled}
-          className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-30">
+          className="rounded-md bg-green-600 px-5 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-30">
           {pendingAction === 'update' ? '更新中...' : '更新'}
         </button>
         <button type="button" onClick={handleDelete}

@@ -11,20 +11,18 @@ export default function YearSearchBar() {
   const [isPending, startTransition] = useTransition()
 
   const initialYear = Number(sp.get('year')) || CURRENT_YEAR
-  const [selectedYear, setSelectedYear] = useState<number>(initialYear)
-
-  const years: number[] = []
-  for (let y = CURRENT_YEAR + 3; y >= CURRENT_YEAR - 10; y--) years.push(y)
+  const [monthValue, setMonthValue] = useState<string>(`${initialYear}-01`)
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    const year = monthValue ? monthValue.substring(0, 4) : String(CURRENT_YEAR)
     startTransition(() => {
-      router.push(`/year-search?searched=true&year=${selectedYear}`)
+      router.push(`/year-search?searched=true&year=${year}`)
     })
   }
 
   function handleReset() {
-    setSelectedYear(CURRENT_YEAR)
+    setMonthValue(`${CURRENT_YEAR}-01`)
     router.push('/year-search')
   }
 
@@ -32,15 +30,12 @@ export default function YearSearchBar() {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label className="block text-xs font-medium text-gray-500">年度（西暦）</label>
-        <select
-          value={selectedYear}
-          onChange={e => setSelectedYear(Number(e.target.value))}
-          className="mt-1 w-36 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-400"
-        >
-          {years.map(y => (
-            <option key={y} value={y}>{y}年</option>
-          ))}
-        </select>
+        <input
+          type="month"
+          value={monthValue}
+          onChange={e => setMonthValue(e.target.value)}
+          className="mt-1 w-44 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-400"
+        />
       </div>
 
       <div className="flex items-center justify-between pt-2 border-t border-gray-100">

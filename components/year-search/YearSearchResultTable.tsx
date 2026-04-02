@@ -26,8 +26,8 @@ export default function YearSearchResultTable({ items }: { items: YearSearchResu
             <tr key={item.product_id} className="border-b border-gray-50 hover:bg-slate-50 transition-colors">
               <td className="px-5 py-3.5 text-sm text-gray-500 whitespace-nowrap">{item.date}</td>
               <td className="px-5 py-3.5 text-sm text-gray-500 font-mono whitespace-nowrap">{item.code_number}</td>
-              <td className="px-5 py-3.5 text-sm font-semibold text-gray-800">{item.product_name}</td>
-              <td className="px-5 py-3.5 text-sm font-semibold text-gray-800 text-right">
+              <td className="px-5 py-3.5 text-sm text-gray-500">{item.product_name}</td>
+              <td className="px-5 py-3.5 text-sm text-gray-500 text-right">
                 {item.total.toLocaleString('ja-JP')}
               </td>
               <td className="px-5 py-3.5 text-sm text-gray-500">
