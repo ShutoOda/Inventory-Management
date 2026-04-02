@@ -72,7 +72,7 @@ export default function SearchBar() {
             className={inputClass}
           />
         </div>
-        <div className="flex-1 min-w-[140px]">
+        <div className="w-28 shrink-0">
           <label className="block text-xs font-medium text-gray-500">保管場所</label>
           <input type="text" value={storageLocation} onChange={e => setStorageLocation(e.target.value)} className={inputClass} />
         </div>

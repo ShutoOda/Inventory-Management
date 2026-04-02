@@ -240,8 +240,8 @@ export default function InventoryForm({ mode, product }: Props) {
       {/* ━━ 基本情報 ━━ */}
       <section>
         <h3 className="mb-3 border-b border-gray-200 pb-2 text-sm font-semibold text-gray-700">基本情報</h3>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="min-w-0 overflow-hidden">
+        <div className="flex flex-wrap gap-4">
+          <div className="flex-1 min-w-[140px]">
             <label className="block text-sm font-medium text-gray-700">
               製品名 <span className="text-red-500">*</span>
             </label>
@@ -253,7 +253,7 @@ export default function InventoryForm({ mode, product }: Props) {
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
             />
           </div>
-          <div className="min-w-0 overflow-hidden">
+          <div className="flex-1 min-w-[140px]">
             <label className="block text-sm font-medium text-gray-700">
               コード番号 <span className="text-red-500">*</span>
             </label>
@@ -266,7 +266,7 @@ export default function InventoryForm({ mode, product }: Props) {
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
             />
           </div>
-          <div>
+          <div className="flex-1 min-w-[140px]">
             <label className="block text-sm font-medium text-gray-700">
               保管場所 <span className="text-red-500">*</span>
             </label>

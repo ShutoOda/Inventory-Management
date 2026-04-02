@@ -11,6 +11,7 @@ export type YearSearchResultItem = {
   total: number
   condition: string
   condition_text: string | null
+  memo: string | null
 }
 
 export type YearSearchResult = {
@@ -27,7 +28,7 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
 
   const { data, error } = await supabase
     .from('products')
-    .select('id, name, code_number, stock_records(date, total, condition, condition_text)')
+    .select('id, name, code_number, stock_records(date, total, condition, condition_text, memo)')
     .order('code_number', { ascending: true })
 
   if (error) return []
@@ -41,6 +42,7 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
       total: number
       condition: string
       condition_text: string | null
+      memo: string | null
     }[]
   }
 
@@ -56,6 +58,12 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
     // 年度内の最新日付のレコードを取得
     const latest = recordsInYear.reduce((a, b) => (a.date! > b.date! ? a : b))
 
+    // 年度内でメモが入力されている最後のレコードのメモを取得
+    const withMemo = recordsInYear.filter(r => r.memo)
+    const lastMemo = withMemo.length > 0
+      ? withMemo.reduce((a, b) => (a.date! >= b.date! ? a : b)).memo
+      : null
+
     results.push({
       product_id: product.id,
       product_name: product.name,
@@ -64,6 +72,7 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
       total: latest.total,
       condition: latest.condition,
       condition_text: latest.condition_text,
+      memo: lastMemo,
     })
   }
 

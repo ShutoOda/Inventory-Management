@@ -18,7 +18,7 @@ function YearPicker({ value, onChange }: { value: number; onChange: (y: number) 
   }, [])
 
   const years: number[] = []
-  for (let y = CURRENT_YEAR + 3; y >= CURRENT_YEAR - 10; y--) years.push(y)
+  for (let y = CURRENT_YEAR + 10; y >= CURRENT_YEAR - 10; y--) years.push(y)
 
   return (
     <div ref={ref} className="relative mt-1">

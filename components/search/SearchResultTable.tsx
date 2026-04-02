@@ -26,8 +26,8 @@ export default function SearchResultTable({ items }: { items: ProductSearchResul
         <tbody>
           {items.map(item => (
             <tr key={item.id} className="border-b border-gray-50 hover:bg-slate-50 transition-colors">
-              <td className="px-5 py-3.5 text-sm text-gray-500 whitespace-nowrap">{item.latest_date ?? ''}</td>
-              <td className="px-5 py-3.5 text-sm text-gray-500">{item.name}</td>
+              <td className="px-5 py-3.5 text-sm text-gray-500 whitespace-nowrap">{(item.latest_date ?? '').replace(/-/g, '/')}</td>
+              <td className="px-5 py-3.5 text-sm text-gray-500 max-w-[200px] truncate" title={item.name}>{item.name}</td>
               <td className="px-5 py-3.5 text-sm text-gray-500 font-mono no-underline">{item.code_number}</td>
               <td className="px-5 py-3.5 text-sm text-gray-500">{item.storage_location}</td>
               <td className="px-5 py-3.5 text-sm text-gray-500 text-right">
@@ -36,9 +36,9 @@ export default function SearchResultTable({ items }: { items: ProductSearchResul
               <td className="px-5 py-3.5 text-right whitespace-nowrap">
                 <Link
                   href={`/inventory?id=${item.id}`}
-                  className="text-sm font-medium text-slate-600 hover:text-slate-900 no-underline"
+                  className="inline-flex items-center rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 no-underline"
                 >
-                  詳細 ›
+                  詳細
                 </Link>
               </td>
             </tr>

@@ -19,6 +19,7 @@ export default function YearSearchResultTable({ items }: { items: YearSearchResu
             <th className="px-5 py-3 text-left text-xs font-semibold text-gray-400 whitespace-nowrap">製品名</th>
             <th className="px-5 py-3 text-right text-xs font-semibold text-gray-400 whitespace-nowrap">総数</th>
             <th className="px-5 py-3 text-left text-xs font-semibold text-gray-400 whitespace-nowrap">状況</th>
+            <th className="px-5 py-3 text-left text-xs font-semibold text-gray-400 whitespace-nowrap">メモ</th>
           </tr>
         </thead>
         <tbody>
@@ -33,6 +34,7 @@ export default function YearSearchResultTable({ items }: { items: YearSearchResu
               <td className="px-5 py-3.5 text-sm text-gray-500">
                 {item.condition === '自由入力' ? (item.condition_text || '自由入力') : item.condition}
               </td>
+              <td className="px-5 py-3.5 text-sm text-gray-500">{item.memo ?? ''}</td>
             </tr>
           ))}
         </tbody>
