@@ -13,8 +13,8 @@ type RowData = {
   ng: string         // 半角数字のみ（カンマなし）
   total: number      // 自動計算
   totalManual: string // 検済時の手動入力（空文字 = 自動計算を使用）
-  condition: string  // '検済' | '未検' | '自由入力'
-  conditionText: string
+  condition: string  // '検済' | '未検'
+  shikake: string
   memo: string
 }
 
@@ -102,8 +102,8 @@ export default function InventoryForm({ mode, product }: Props) {
       ng: r.ng === 0 ? '' : String(r.ng),
       total: r.total,
       totalManual: r.condition === '検済' ? String(r.total) : '',
-      condition: r.condition,
-      conditionText: r.condition_text ?? '',
+      condition: r.condition === '自由入力' ? '未検' : r.condition,
+      shikake: r.shikake ?? '',
       memo: r.memo ?? '',
     })) ?? []
   )
@@ -129,7 +129,7 @@ export default function InventoryForm({ mode, product }: Props) {
   function addRow() {
     setRows(prev => [...prev, {
       clientId: newClientId(), date: '', status: '-', quantity: '',
-      ng: '', total: 0, totalManual: '', condition: '未検', conditionText: '', memo: '',
+      ng: '', total: 0, totalManual: '', condition: '未検', shikake: '', memo: '',
     }])
   }
 
@@ -153,8 +153,9 @@ export default function InventoryForm({ mode, product }: Props) {
         quantity: Number(row.quantity) || 0,
         ng: row.status === '-' ? (Number(row.ng) || 0) : 0,
         total: row.total,
-        condition: row.condition === '自由入力' ? row.conditionText || '自由入力' : row.condition,
-        condition_text: row.condition === '自由入力' ? row.conditionText : null,
+        condition: row.condition,
+        condition_text: null,
+        shikake: row.shikake || null,
         memo: row.memo || null,
         date_order: dateCounts[dateKey],
       }
@@ -321,7 +322,7 @@ export default function InventoryForm({ mode, product }: Props) {
                 <th className="border-b border-gray-200 px-2 py-2 text-right text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>NG</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-right text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>総数</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 110 }}>状況</th>
-                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 270 }}>自由入力</th>
+                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 270 }}>仕掛</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 540 }}>メモ</th>
               </tr>
             </thead>
@@ -395,15 +396,12 @@ export default function InventoryForm({ mode, product }: Props) {
                         disabled={allDisabled} className={cellSelect}>
                         <option value="検済">検済</option>
                         <option value="未検">未検</option>
-                        <option value="自由入力">自由入力</option>
                       </select>
                     </td>
                     <td className="px-1 py-1">
-                      <input type="text" value={row.conditionText}
-                        onChange={e => updateRow(row.clientId, 'conditionText', e.target.value)}
-                        disabled={allDisabled || row.condition !== '自由入力'}
-                        placeholder={row.condition === '自由入力' ? '内容を入力' : ''}
-                        className={cellInput} />
+                      <input type="text" value={row.shikake}
+                        onChange={e => updateRow(row.clientId, 'shikake', e.target.value)}
+                        disabled={allDisabled} className={cellInput} />
                     </td>
                     <td className="px-1 py-1">
                       <input type="text" value={row.memo}

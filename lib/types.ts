@@ -17,6 +17,7 @@ export type StockRecord = {
   total: number
   condition: string
   condition_text: string | null
+  shikake: string | null
   memo: string | null
   sort_order: number
   date_order: number

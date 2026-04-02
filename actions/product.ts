@@ -12,6 +12,7 @@ export type StockRecordInput = {
   total: number
   condition: string
   condition_text: string | null
+  shikake: string | null
   memo: string | null
   date_order: number
 }
@@ -73,6 +74,7 @@ export async function createProduct(
           total: r.total,
           condition: r.condition,
           condition_text: r.condition_text,
+          shikake: r.shikake,
           memo: r.memo,
           date_order: r.date_order,
           sort_order: i,
@@ -128,6 +130,7 @@ export async function updateProduct(
           total: r.total,
           condition: r.condition,
           condition_text: r.condition_text,
+          shikake: r.shikake,
           memo: r.memo,
           date_order: r.date_order,
           sort_order: i,
