@@ -11,7 +11,7 @@ export type YearSearchResultItem = {
   total: number
   condition: string
   condition_text: string | null
-  memo: string | null
+  shikake: string | null
 }
 
 export type YearSearchResult = {
@@ -28,7 +28,7 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
 
   const { data, error } = await supabase
     .from('products')
-    .select('id, name, code_number, stock_records(date, total, condition, condition_text, memo, date_order)')
+    .select('id, name, code_number, stock_records(date, total, condition, condition_text, shikake, date_order)')
     .order('code_number', { ascending: true })
 
   if (error) return []
@@ -42,7 +42,7 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
       total: number
       condition: string
       condition_text: string | null
-      memo: string | null
+      shikake: string | null
       date_order: number
     }[]
   }
@@ -59,13 +59,13 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
     // 年度内の最新日付のレコードを取得
     const latest = recordsInYear.reduce((a, b) => (a.date! > b.date! ? a : b))
 
-    // 年度内でメモが入力されている最後のレコードのメモを取得（同日の場合は date_order が大きい方）
-    const withMemo = recordsInYear.filter(r => r.memo)
-    const lastMemo = withMemo.length > 0
-      ? withMemo.reduce((a, b) => {
+    // 年度内で仕掛が入力されている最後のレコードの仕掛を取得（同日の場合は date_order が大きい方）
+    const withShikake = recordsInYear.filter(r => r.shikake)
+    const lastShikake = withShikake.length > 0
+      ? withShikake.reduce((a, b) => {
           if (a.date! !== b.date!) return a.date! > b.date! ? a : b
           return a.date_order >= b.date_order ? a : b
-        }).memo
+        }).shikake
       : null
 
     results.push({
@@ -76,7 +76,7 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
       total: latest.total,
       condition: latest.condition,
       condition_text: latest.condition_text,
-      memo: lastMemo,
+      shikake: lastShikake,
     })
   }
 
