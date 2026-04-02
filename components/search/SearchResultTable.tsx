@@ -1,8 +1,24 @@
-import Link from 'next/link'
+'use client'
+
+import { useRouter } from 'next/navigation'
+import { useRef } from 'react'
 import type { ProductSearchResult } from '@/lib/types'
 import LongPressText from '@/components/LongPressText'
 
 export default function SearchResultTable({ items }: { items: ProductSearchResult[] }) {
+  const router = useRouter()
+  const lastTap = useRef<{ id: string; time: number } | null>(null)
+
+  function handleClick(id: string) {
+    const now = Date.now()
+    if (lastTap.current?.id === id && now - lastTap.current.time < 400) {
+      router.push(`/inventory?id=${id}`)
+      lastTap.current = null
+    } else {
+      lastTap.current = { id, time: now }
+    }
+  }
+
   if (items.length === 0) {
     return (
       <p className="py-12 text-center text-sm text-gray-400">
@@ -21,28 +37,23 @@ export default function SearchResultTable({ items }: { items: ProductSearchResul
             <th className="px-5 py-3 text-left text-xs font-semibold text-gray-400 whitespace-nowrap">コード番号</th>
             <th className="px-5 py-3 text-left text-xs font-semibold text-gray-400 whitespace-nowrap">保管場所</th>
             <th className="px-5 py-3 text-right text-xs font-semibold text-gray-400 whitespace-nowrap">総数</th>
-            <th className="px-5 py-3" />
           </tr>
         </thead>
         <tbody>
           {items.map(item => (
-            <tr key={item.id} className="border-b border-gray-50 hover:bg-slate-50 transition-colors">
+            <tr
+              key={item.id}
+              onClick={() => handleClick(item.id)}
+              className="border-b border-gray-50 hover:bg-slate-50 transition-colors cursor-pointer select-none"
+            >
               <td className="px-5 py-3.5 text-sm text-gray-500 whitespace-nowrap">{(item.latest_date ?? '').replace(/-/g, '/')}</td>
               <td className="px-5 py-3.5 text-sm text-gray-500 max-w-[200px] truncate">
                 <LongPressText text={item.name} />
               </td>
-              <td className="px-5 py-3.5 text-sm text-gray-500 font-mono no-underline">{item.code_number}</td>
+              <td className="px-5 py-3.5 text-sm text-gray-500 font-mono">{item.code_number}</td>
               <td className="px-5 py-3.5 text-sm text-gray-500">{item.storage_location}</td>
               <td className="px-5 py-3.5 text-sm text-gray-500 text-right">
                 {item.latest_total != null ? item.latest_total.toLocaleString('ja-JP') : ''}
-              </td>
-              <td className="px-5 py-3.5 text-right whitespace-nowrap">
-                <Link
-                  href={`/inventory?id=${item.id}`}
-                  className="inline-flex items-center rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 no-underline"
-                >
-                  詳細
-                </Link>
               </td>
             </tr>
           ))}
