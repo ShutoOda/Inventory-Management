@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
@@ -14,10 +14,11 @@ function buildYearRange(center: number): number[] {
 export default function YearSearchBar() {
   const router = useRouter()
   const sp = useSearchParams()
+  const [isPending, startTransition] = useTransition()
 
-  const initialYear = Number(sp.get('year')) || 0
-  const [selectedYear, setSelectedYear] = useState<number | null>(initialYear || null)
-  const [viewCenter, setViewCenter] = useState(initialYear || CURRENT_YEAR)
+  const initialYear = Number(sp.get('year')) || CURRENT_YEAR
+  const [selectedYear, setSelectedYear] = useState<number>(initialYear)
+  const [viewCenter, setViewCenter] = useState(initialYear)
   const [open, setOpen] = useState(false)
 
   const years = buildYearRange(viewCenter)
@@ -29,12 +30,13 @@ export default function YearSearchBar() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!selectedYear) return
-    router.push(`/year-search?searched=true&year=${selectedYear}`)
+    startTransition(() => {
+      router.push(`/year-search?searched=true&year=${selectedYear}`)
+    })
   }
 
   function handleReset() {
-    setSelectedYear(null)
+    setSelectedYear(CURRENT_YEAR)
     setViewCenter(CURRENT_YEAR)
     router.push('/year-search')
   }
@@ -50,7 +52,7 @@ export default function YearSearchBar() {
               onClick={() => setOpen(v => !v)}
               className="w-36 rounded-md border border-gray-300 bg-white px-3 py-2 text-left text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              {selectedYear ? `${selectedYear}年` : '年度を選択'}
+              {selectedYear}年
               <span className="float-right text-gray-400">▾</span>
             </button>
 
@@ -113,9 +115,10 @@ export default function YearSearchBar() {
         </div>
         <button
           type="submit"
-          className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          disabled={isPending}
+          className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
         >
-          検索
+          {isPending ? '検索中...' : '検索'}
         </button>
       </div>
     </form>

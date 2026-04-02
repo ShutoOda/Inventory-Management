@@ -1,12 +1,13 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import Link from 'next/link'
 
 export default function SearchBar() {
   const router = useRouter()
   const sp = useSearchParams()
+  const [isPending, startTransition] = useTransition()
 
   const [date, setDate] = useState(sp.get('date') ?? '')
   const [name, setName] = useState(sp.get('name') ?? '')
@@ -27,7 +28,9 @@ export default function SearchBar() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    router.push(`/search?${buildParams().toString()}`)
+    startTransition(() => {
+      router.push(`/search?${buildParams().toString()}`)
+    })
   }
 
   function handleReset() {
@@ -118,9 +121,10 @@ export default function SearchBar() {
         </div>
         <button
           type="submit"
-          className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 sm:self-auto"
+          disabled={isPending}
+          className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60 sm:self-auto"
         >
-          検索
+          {isPending ? '検索中...' : '検索'}
         </button>
       </div>
     </form>
