@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useTransition } from 'react'
+import { useState, useMemo, useTransition, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createProduct, updateProduct, deleteProduct, type StockRecordInput } from '@/actions/product'
 import type { ProductWithRecords } from '@/lib/types'
@@ -112,6 +112,34 @@ export default function InventoryForm({ mode, product }: Props) {
 
   const displayRows = useMemo(() => calcTotals(rows), [rows])
   const allDisabled = deleted || isPending
+
+  const [longPressTooltip, setLongPressTooltip] = useState<{ text: string; x: number; y: number } | null>(null)
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  function startLongPress(text: string, e: React.PointerEvent) {
+    if (!text) return
+    longPressTimer.current = setTimeout(() => {
+      setLongPressTooltip({ text, x: e.clientX, y: e.clientY })
+    }, 500)
+  }
+
+  function cancelLongPress() {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current)
+      longPressTimer.current = null
+    }
+  }
+
+  useEffect(() => {
+    if (!longPressTooltip) return
+    function dismiss() { setLongPressTooltip(null) }
+    document.addEventListener('pointerup', dismiss)
+    document.addEventListener('pointercancel', dismiss)
+    return () => {
+      document.removeEventListener('pointerup', dismiss)
+      document.removeEventListener('pointercancel', dismiss)
+    }
+  }, [longPressTooltip])
 
   // 編集モードで製品が存在しない（削除済みでもない）場合はエラー表示
   if (mode === 'edit' && !product && !deleted && !savedId && pendingAction !== 'delete') {
@@ -228,6 +256,14 @@ export default function InventoryForm({ mode, product }: Props) {
 
   return (
     <div className="space-y-6 min-w-0 w-full">
+      {longPressTooltip && (
+        <div
+          className="fixed z-50 max-w-xs rounded-lg bg-gray-800 px-3 py-2 text-sm text-white shadow-lg pointer-events-none"
+          style={{ left: longPressTooltip.x + 12, top: longPressTooltip.y - 40 }}
+        >
+          {longPressTooltip.text}
+        </div>
+      )}
       {deleted && (
         <div className="rounded-md bg-green-50 border border-green-200 p-3 text-sm text-green-700 font-medium">
           正常に削除されました。
@@ -402,7 +438,11 @@ export default function InventoryForm({ mode, product }: Props) {
                       <input type="text" value={row.shikake}
                         onChange={e => updateRow(row.clientId, 'shikake', e.target.value)}
                         disabled={allDisabled} className={cellInput}
-                        title={row.shikake || undefined} />
+                        title={row.shikake || undefined}
+                        onPointerDown={e => startLongPress(row.shikake, e)}
+                        onPointerUp={cancelLongPress}
+                        onPointerLeave={cancelLongPress}
+                        onPointerCancel={cancelLongPress} />
                     </td>
                     <td className="px-1 py-1">
                       <input type="text" value={row.memo}
