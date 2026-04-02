@@ -41,11 +41,12 @@ export default function SearchResultTable({ items }: { items: ProductSearchResul
           </tr>
         </thead>
         <tbody>
-          {items.map(item => (
+          {items.map((item, i) => (
             <tr
               key={item.id}
               onClick={() => handleClick(item.id)}
-              className="border-b border-gray-50 hover:bg-slate-50 transition-colors cursor-pointer select-none"
+              className="border-b border-gray-50 cursor-pointer select-none"
+              style={{ backgroundColor: i % 2 === 0 ? '#fff0f3' : '#ffffff' }}
             >
               <td className="px-5 py-3.5 text-sm text-gray-500 whitespace-nowrap">{(item.latest_date ?? '').replace(/-/g, '/')}</td>
               <td className="px-5 py-3.5 text-sm text-gray-500 max-w-[200px] truncate">
