@@ -13,6 +13,7 @@ export type StockRecordInput = {
   condition: string
   condition_text: string | null
   memo: string | null
+  date_order: number
 }
 
 export async function getProductById(id: string): Promise<ProductWithRecords | null> {
@@ -73,6 +74,7 @@ export async function createProduct(
           condition: r.condition,
           condition_text: r.condition_text,
           memo: r.memo,
+          date_order: r.date_order,
           sort_order: i,
         }))
       )
@@ -127,6 +129,7 @@ export async function updateProduct(
           condition: r.condition,
           condition_text: r.condition_text,
           memo: r.memo,
+          date_order: r.date_order,
           sort_order: i,
         }))
       )

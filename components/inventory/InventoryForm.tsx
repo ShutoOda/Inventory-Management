@@ -143,16 +143,22 @@ export default function InventoryForm({ mode, product }: Props) {
   }
 
   function buildRecords(): StockRecordInput[] {
-    return displayRows.map(row => ({
-      date: row.date,
-      status: row.status,
-      quantity: Number(row.quantity) || 0,
-      ng: row.status === '-' ? (Number(row.ng) || 0) : 0,
-      total: row.total,
-      condition: row.condition === '自由入力' ? row.conditionText || '自由入力' : row.condition,
-      condition_text: row.condition === '自由入力' ? row.conditionText : null,
-      memo: row.memo || null,
-    }))
+    const dateCounts: Record<string, number> = {}
+    return displayRows.map(row => {
+      const dateKey = row.date || ''
+      dateCounts[dateKey] = (dateCounts[dateKey] ?? 0) + 1
+      return {
+        date: row.date,
+        status: row.status,
+        quantity: Number(row.quantity) || 0,
+        ng: row.status === '-' ? (Number(row.ng) || 0) : 0,
+        total: row.total,
+        condition: row.condition === '自由入力' ? row.conditionText || '自由入力' : row.condition,
+        condition_text: row.condition === '自由入力' ? row.conditionText : null,
+        memo: row.memo || null,
+        date_order: dateCounts[dateKey],
+      }
+    })
   }
 
   function validateTotal(): boolean {

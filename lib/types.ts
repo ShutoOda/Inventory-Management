@@ -19,6 +19,7 @@ export type StockRecord = {
   condition_text: string | null
   memo: string | null
   sort_order: number
+  date_order: number
   created_at: string
   updated_at: string
 }
