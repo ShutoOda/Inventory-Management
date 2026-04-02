@@ -47,22 +47,22 @@ export default function SearchBar() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-        <div className="min-w-0">
+      <div className="flex flex-wrap gap-3">
+        <div className="w-36 shrink-0">
           <label className="block text-xs font-medium text-gray-500">日付</label>
           <input
             type="date"
             value={date}
             onChange={e => setDate(e.target.value)}
             className={inputClass}
-            style={{ WebkitAppearance: 'none', appearance: 'none', width: '100%' } as React.CSSProperties}
+            style={{ WebkitAppearance: 'none', appearance: 'none' } as React.CSSProperties}
           />
         </div>
-        <div className="min-w-0">
+        <div className="flex-1 min-w-[140px]">
           <label className="block text-xs font-medium text-gray-500">製品名</label>
           <input type="text" value={name} onChange={e => setName(e.target.value)} className={inputClass} />
         </div>
-        <div className="min-w-0">
+        <div className="flex-1 min-w-[140px]">
           <label className="block text-xs font-medium text-gray-500">コード番号</label>
           <input
             type="text"
@@ -72,11 +72,11 @@ export default function SearchBar() {
             className={inputClass}
           />
         </div>
-        <div className="min-w-0">
+        <div className="flex-1 min-w-[140px]">
           <label className="block text-xs font-medium text-gray-500">保管場所</label>
           <input type="text" value={storageLocation} onChange={e => setStorageLocation(e.target.value)} className={inputClass} />
         </div>
-        <div className="min-w-0">
+        <div className="flex-1 min-w-[140px]">
           <label className="block text-xs font-medium text-gray-500">メモ</label>
           <input type="text" value={memo} onChange={e => setMemo(e.target.value)} className={inputClass} />
         </div>

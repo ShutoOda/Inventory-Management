@@ -1,9 +1,60 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useRef, useEffect } from 'react'
 
 const CURRENT_YEAR = new Date().getFullYear()
+
+function YearPicker({ value, onChange }: { value: number; onChange: (y: number) => void }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const years: number[] = []
+  for (let y = CURRENT_YEAR + 3; y >= CURRENT_YEAR - 10; y--) years.push(y)
+
+  return (
+    <div ref={ref} className="relative mt-1">
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className="flex items-center justify-between w-36 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-400"
+      >
+        <span>{value}年</span>
+        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute z-10 mt-1 w-48 rounded-lg border border-gray-200 bg-white shadow-lg p-2">
+          <div className="grid grid-cols-3 gap-1">
+            {years.map(y => (
+              <button
+                key={y}
+                type="button"
+                onClick={() => { onChange(y); setOpen(false) }}
+                className={`rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
+                  y === value
+                    ? 'bg-slate-800 text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                {y}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function YearSearchBar() {
   const router = useRouter()
@@ -11,18 +62,17 @@ export default function YearSearchBar() {
   const [isPending, startTransition] = useTransition()
 
   const initialYear = Number(sp.get('year')) || CURRENT_YEAR
-  const [monthValue, setMonthValue] = useState<string>(`${initialYear}-01`)
+  const [selectedYear, setSelectedYear] = useState<number>(initialYear)
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const year = monthValue ? monthValue.substring(0, 4) : String(CURRENT_YEAR)
     startTransition(() => {
-      router.push(`/year-search?searched=true&year=${year}`)
+      router.push(`/year-search?searched=true&year=${selectedYear}`)
     })
   }
 
   function handleReset() {
-    setMonthValue(`${CURRENT_YEAR}-01`)
+    setSelectedYear(CURRENT_YEAR)
     router.push('/year-search')
   }
 
@@ -30,12 +80,7 @@ export default function YearSearchBar() {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label className="block text-xs font-medium text-gray-500">年度（西暦）</label>
-        <input
-          type="month"
-          value={monthValue}
-          onChange={e => setMonthValue(e.target.value)}
-          className="mt-1 w-44 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-400"
-        />
+        <YearPicker value={selectedYear} onChange={setSelectedYear} />
       </div>
 
       <div className="flex items-center justify-between pt-2 border-t border-gray-100">
