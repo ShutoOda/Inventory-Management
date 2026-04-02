@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { ProductSearchResult } from '@/lib/types'
+import LongPressText from '@/components/LongPressText'
 
 export default function SearchResultTable({ items }: { items: ProductSearchResult[] }) {
   if (items.length === 0) {
@@ -27,7 +28,9 @@ export default function SearchResultTable({ items }: { items: ProductSearchResul
           {items.map(item => (
             <tr key={item.id} className="border-b border-gray-50 hover:bg-slate-50 transition-colors">
               <td className="px-5 py-3.5 text-sm text-gray-500 whitespace-nowrap">{(item.latest_date ?? '').replace(/-/g, '/')}</td>
-              <td className="px-5 py-3.5 text-sm text-gray-500 max-w-[200px] truncate" title={item.name}>{item.name}</td>
+              <td className="px-5 py-3.5 text-sm text-gray-500 max-w-[200px] truncate">
+                <LongPressText text={item.name} />
+              </td>
               <td className="px-5 py-3.5 text-sm text-gray-500 font-mono no-underline">{item.code_number}</td>
               <td className="px-5 py-3.5 text-sm text-gray-500">{item.storage_location}</td>
               <td className="px-5 py-3.5 text-sm text-gray-500 text-right">
