@@ -43,13 +43,13 @@ export default function SearchBar() {
   }
 
   const inputClass =
-    'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
+    'mt-1 block w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 bg-white focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-400'
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="min-w-0 overflow-hidden">
-          <label className="block text-sm font-medium text-gray-700">日付</label>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="min-w-0">
+          <label className="block text-xs font-medium text-gray-500">日付</label>
           <input
             type="date"
             value={date}
@@ -58,17 +58,12 @@ export default function SearchBar() {
             style={{ WebkitAppearance: 'none', appearance: 'none', width: '100%' } as React.CSSProperties}
           />
         </div>
-        <div className="min-w-0 overflow-hidden">
-          <label className="block text-sm font-medium text-gray-700">製品名</label>
-          <input
-            type="text"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            className={inputClass}
-          />
+        <div className="min-w-0">
+          <label className="block text-xs font-medium text-gray-500">製品名</label>
+          <input type="text" value={name} onChange={e => setName(e.target.value)} className={inputClass} />
         </div>
-        <div className="min-w-0 overflow-hidden">
-          <label className="block text-sm font-medium text-gray-700">コード番号</label>
+        <div className="min-w-0">
+          <label className="block text-xs font-medium text-gray-500">コード番号</label>
           <input
             type="text"
             value={codeNumber}
@@ -77,53 +72,41 @@ export default function SearchBar() {
             className={inputClass}
           />
         </div>
-        <div className="min-w-0 overflow-hidden">
-          <label className="block text-sm font-medium text-gray-700">保管場所</label>
-          <input
-            type="text"
-            value={storageLocation}
-            onChange={e => setStorageLocation(e.target.value)}
-            className={inputClass}
-          />
+        <div className="min-w-0">
+          <label className="block text-xs font-medium text-gray-500">保管場所</label>
+          <input type="text" value={storageLocation} onChange={e => setStorageLocation(e.target.value)} className={inputClass} />
         </div>
-        <div className="min-w-0 overflow-hidden sm:col-span-2">
-          <label className="block text-sm font-medium text-gray-700">メモ</label>
-          <input
-            type="text"
-            value={memo}
-            onChange={e => setMemo(e.target.value)}
-            className={inputClass}
-          />
+        <div className="min-w-0">
+          <label className="block text-xs font-medium text-gray-500">メモ</label>
+          <input type="text" value={memo} onChange={e => setMemo(e.target.value)} className={inputClass} />
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-t border-gray-200 pt-4">
-        <div className="flex flex-wrap gap-2">
+      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+        <div className="flex gap-2">
           <button
             type="button"
             onClick={handleReset}
-            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
           >
             リセット
           </button>
           <Link
             href="/inventory"
-            className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
           >
             新規追加
-          </Link>
-          <Link
-            href="/year-search"
-            className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
-          >
-            製品在庫年度検索
           </Link>
         </div>
         <button
           type="submit"
           disabled={isPending}
-          className="rounded-md bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60 sm:self-auto"
+          className="flex items-center gap-2 rounded-lg bg-slate-800 px-5 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-60"
         >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" strokeWidth="2" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35" />
+          </svg>
           {isPending ? '検索中...' : '検索'}
         </button>
       </div>

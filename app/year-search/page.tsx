@@ -1,5 +1,4 @@
 import { Suspense } from 'react'
-import Link from 'next/link'
 import { searchByYear } from '@/actions/yearSearch'
 import { SEARCH_PAGE_SIZE } from '@/lib/constants'
 import YearSearchBar from '@/components/year-search/YearSearchBar'
@@ -28,29 +27,35 @@ export default async function YearSearchPage({ searchParams }: PageProps) {
   if (params.year) baseParams.set('year', params.year)
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-white">製品在庫年度検索</h2>
-        <Link href="/search" className="text-sm text-blue-400 hover:underline">
-          ← 一覧に戻る
-        </Link>
+    <div className="space-y-5">
+      <div>
+        <h2 className="text-xl font-bold text-slate-800">製品在庫年度検索</h2>
+        <p className="mt-1 text-sm text-slate-500">年度別の在庫情報を検索・確認できます</p>
       </div>
 
-      <div className="rounded-lg bg-white p-4 shadow-sm">
+      <div className="rounded-xl bg-white shadow-sm border border-gray-100 p-5">
+        <div className="flex items-center gap-2 mb-4 text-sm font-semibold text-slate-700">
+          <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" strokeWidth="2" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35" />
+          </svg>
+          検索条件
+        </div>
         <Suspense>
           <YearSearchBar />
         </Suspense>
       </div>
 
       {searched && (
-        <div className="rounded-lg bg-white shadow-sm">
-          <div className="border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-            <span className="text-sm text-gray-600">{total} 件</span>
+        <div className="rounded-xl bg-white shadow-sm border border-gray-100">
+          <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between">
+            <span className="text-sm font-semibold text-slate-700">
+              検索結果
+              <span className="ml-2 text-slate-400 font-normal">{total} 件</span>
+            </span>
             <div className="flex items-center gap-4">
               {totalPages > 1 && (
-                <span className="text-sm text-gray-500">
-                  {currentPage} / {totalPages} ページ
-                </span>
+                <span className="text-xs text-slate-400">{currentPage} / {totalPages} ページ</span>
               )}
               <YearSearchExportButton year={year} disabled={total === 0} />
             </div>

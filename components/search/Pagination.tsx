@@ -29,13 +29,13 @@ export default function Pagination({ currentPage, totalPages, searchParamsString
     pages.push(totalPages)
   }
 
-  const btnBase = 'px-3 py-1.5 text-sm rounded-md'
-  const active = `${btnBase} bg-blue-600 text-white font-medium`
-  const inactive = `${btnBase} border border-gray-300 text-gray-700 hover:bg-gray-50`
-  const disabled = `${btnBase} border border-gray-200 text-gray-300 cursor-not-allowed`
+  const base = 'w-8 h-8 flex items-center justify-center rounded-md text-sm'
+  const active = `${base} bg-slate-800 text-white font-medium`
+  const inactive = `${base} border border-gray-200 text-gray-600 hover:bg-gray-50`
+  const disabled = `${base} border border-gray-100 text-gray-300 cursor-not-allowed`
 
   return (
-    <div className="flex items-center justify-center gap-1 px-4 py-3">
+    <div className="flex items-center justify-center gap-1 px-4 py-4">
       {currentPage > 1 ? (
         <Link href={pageUrl(currentPage - 1)} className={inactive}>‹</Link>
       ) : (
@@ -44,7 +44,7 @@ export default function Pagination({ currentPage, totalPages, searchParamsString
 
       {pages.map((p, i) =>
         p === '...' ? (
-          <span key={`ellipsis-${i}`} className="px-2 py-1.5 text-sm text-gray-400">…</span>
+          <span key={`ellipsis-${i}`} className="px-1 text-sm text-gray-400">…</span>
         ) : (
           <Link key={p} href={pageUrl(p)} className={p === currentPage ? active : inactive}>
             {p}

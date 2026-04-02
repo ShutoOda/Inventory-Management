@@ -20,7 +20,6 @@ export default async function SearchPage({ searchParams }: PageProps) {
   const currentPage = Math.max(1, Number(params.page) || 1)
   const totalPages = Math.ceil(total / SEARCH_PAGE_SIZE)
 
-  // URLパラメータからpageを除いた文字列（ページネーションリンク生成用）
   const baseParams = new URLSearchParams()
   if (params.searched) baseParams.set('searched', params.searched)
   if (params.date) baseParams.set('date', params.date)
@@ -30,23 +29,34 @@ export default async function SearchPage({ searchParams }: PageProps) {
   if (params.memo) baseParams.set('memo', params.memo)
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-white">製品在庫一覧</h2>
+    <div className="space-y-5">
+      <div>
+        <h2 className="text-xl font-bold text-slate-800">製品在庫一覧</h2>
+        <p className="mt-1 text-sm text-slate-500">登録されている製品の在庫情報を検索・確認できます</p>
+      </div>
 
-      <div className="rounded-lg bg-white p-4 shadow-sm">
+      <div className="rounded-xl bg-white shadow-sm border border-gray-100 p-5">
+        <div className="flex items-center gap-2 mb-4 text-sm font-semibold text-slate-700">
+          <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" strokeWidth="2" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35" />
+          </svg>
+          検索条件
+        </div>
         <Suspense>
           <SearchBar />
         </Suspense>
       </div>
 
       {searched && (
-        <div className="rounded-lg bg-white shadow-sm">
-          <div className="border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-            <span className="text-sm text-gray-600">{total} 件</span>
+        <div className="rounded-xl bg-white shadow-sm border border-gray-100">
+          <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between">
+            <span className="text-sm font-semibold text-slate-700">
+              検索結果
+              <span className="ml-2 text-slate-400 font-normal">{total} 件</span>
+            </span>
             {totalPages > 1 && (
-              <span className="text-sm text-gray-500">
-                {currentPage} / {totalPages} ページ
-              </span>
+              <span className="text-xs text-slate-400">{currentPage} / {totalPages} ページ</span>
             )}
           </div>
           <SearchResultTable items={items} />
