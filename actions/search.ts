@@ -8,7 +8,7 @@ export async function searchInventory(params: SearchParams): Promise<SearchResul
   const supabase = await createClient()
   let query = supabase
     .from('products')
-    .select('*, stock_records(date, memo)')
+    .select('*, stock_records(date, memo, total)')
     .order('name', { ascending: true })
 
   if (params.name) {
@@ -37,7 +37,7 @@ export async function searchInventory(params: SearchParams): Promise<SearchResul
     storage_location: string
     created_at: string
     updated_at: string
-    stock_records: { date: string | null; memo: string | null }[]
+    stock_records: { date: string | null; memo: string | null; total: number }[]
   }
 
   let results: Row[] = (data ?? []) as Row[]
@@ -74,6 +74,10 @@ export async function searchInventory(params: SearchParams): Promise<SearchResul
       [...p.stock_records]
         .filter(r => r.date)
         .sort((a, b) => (a.date! > b.date! ? -1 : a.date! < b.date! ? 1 : 0))[0]?.memo ?? null,
+    latest_total:
+      [...p.stock_records]
+        .filter(r => r.date)
+        .sort((a, b) => (a.date! > b.date! ? -1 : a.date! < b.date! ? 1 : 0))[0]?.total ?? null,
   }))
 
   const total = mapped.length

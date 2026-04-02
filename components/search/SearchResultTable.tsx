@@ -27,8 +27,8 @@ export default function SearchResultTable({ items }: { items: ProductSearchResul
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 whitespace-nowrap">
               保管場所
             </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 whitespace-nowrap">
-              メモ
+            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 whitespace-nowrap">
+              総数
             </th>
             <th className="px-4 py-3" />
           </tr>
@@ -42,7 +42,9 @@ export default function SearchResultTable({ items }: { items: ProductSearchResul
               <td className="px-4 py-3 text-sm font-medium text-gray-900">{item.name}</td>
               <td className="px-4 py-3 text-sm text-gray-600 font-mono">{item.code_number}</td>
               <td className="px-4 py-3 text-sm text-gray-600">{item.storage_location}</td>
-              <td className="px-4 py-3 text-sm text-gray-600">{item.latest_memo ?? ''}</td>
+              <td className="px-4 py-3 text-sm text-gray-600 text-right">
+                {item.latest_total != null ? item.latest_total.toLocaleString('ja-JP') : ''}
+              </td>
               <td className="px-4 py-3 text-right whitespace-nowrap">
                 <Link
                   href={`/inventory?id=${item.id}`}

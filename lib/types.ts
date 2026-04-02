@@ -30,6 +30,7 @@ export type ProductWithRecords = Product & {
 export type ProductSearchResult = Product & {
   latest_date: string | null
   latest_memo: string | null
+  latest_total: number | null
 }
 
 export type ActionResult = {

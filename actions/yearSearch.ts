@@ -28,7 +28,7 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
   const { data, error } = await supabase
     .from('products')
     .select('id, name, code_number, stock_records(date, total, condition, condition_text)')
-    .order('name', { ascending: true })
+    .order('code_number', { ascending: true })
 
   if (error) return []
 

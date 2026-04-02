@@ -12,6 +12,7 @@ type RowData = {
   quantity: string   // 半角数字のみ（カンマなし）
   ng: string         // 半角数字のみ（カンマなし）
   total: number      // 自動計算
+  totalManual: string // 検済時の手動入力（空文字 = 自動計算を使用）
   condition: string  // '検済' | '未検' | '自由入力'
   conditionText: string
   memo: string
@@ -51,6 +52,13 @@ function calcTotals(rows: RowData[]): RowData[] {
     const qty = Number(row.quantity) || 0
     const ng = row.status === '-' ? (Number(row.ng) || 0) : 0
     running = row.status === '+' ? running + qty : running - qty - ng
+    if (row.condition === '検済' && row.totalManual !== '') {
+      const manual = Number(row.totalManual)
+      if (!isNaN(manual)) {
+        running = manual
+        return { ...row, total: manual }
+      }
+    }
     return { ...row, total: running }
   })
 }
@@ -93,6 +101,7 @@ export default function InventoryForm({ mode, product }: Props) {
       quantity: r.quantity === 0 ? '' : String(r.quantity),
       ng: r.ng === 0 ? '' : String(r.ng),
       total: r.total,
+      totalManual: r.condition === '検済' ? String(r.total) : '',
       condition: r.condition,
       conditionText: r.condition_text ?? '',
       memo: r.memo ?? '',
@@ -120,7 +129,7 @@ export default function InventoryForm({ mode, product }: Props) {
   function addRow() {
     setRows(prev => [...prev, {
       clientId: newClientId(), date: '', status: '-', quantity: '',
-      ng: '', total: 0, condition: '未検', conditionText: '', memo: '',
+      ng: '', total: 0, totalManual: '', condition: '未検', conditionText: '', memo: '',
     }])
   }
 
@@ -353,13 +362,30 @@ export default function InventoryForm({ mode, product }: Props) {
                         className={`${cellInput} text-right`} />
                     </td>
                     <td className="px-1 py-1">
-                      <input type="text" readOnly value={formatTotal(row.total)} tabIndex={-1}
-                        disabled={allDisabled}
-                        className={`${cellInput} text-right cursor-default`} />
+                      {row.condition === '検済' ? (
+                        <input type="text" inputMode="numeric"
+                          value={row.totalManual}
+                          onChange={e => updateRow(row.clientId, 'totalManual', toDigits(e.target.value))}
+                          disabled={allDisabled}
+                          className={`${cellInput} text-right`} />
+                      ) : (
+                        <input type="text" readOnly value={formatTotal(row.total)} tabIndex={-1}
+                          disabled={allDisabled}
+                          className={`${cellInput} text-right cursor-default`} />
+                      )}
                     </td>
                     <td className="px-1 py-1">
                       <select value={row.condition}
-                        onChange={e => updateRow(row.clientId, 'condition', e.target.value)}
+                        onChange={e => {
+                          const newCondition = e.target.value
+                          setRows(prev => prev.map(r => {
+                            if (r.clientId !== row.clientId) return r
+                            const totalManual = newCondition === '検済'
+                              ? String(displayRows.find(d => d.clientId === row.clientId)?.total ?? r.total)
+                              : ''
+                            return { ...r, condition: newCondition, totalManual }
+                          }))
+                        }}
                         disabled={allDisabled} className={cellSelect}>
                         <option value="検済">検済</option>
                         <option value="未検">未検</option>
