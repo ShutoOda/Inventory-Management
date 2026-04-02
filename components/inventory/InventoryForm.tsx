@@ -371,7 +371,7 @@ export default function InventoryForm({ mode, product }: Props) {
                       ) : (
                         <input type="text" readOnly value={formatTotal(row.total)} tabIndex={-1}
                           disabled={allDisabled}
-                          className={`${cellInput} text-right cursor-default`} />
+                          className={`${cellInput} text-right cursor-default bg-gray-100 text-gray-400`} />
                       )}
                     </td>
                     <td className="px-1 py-1">
