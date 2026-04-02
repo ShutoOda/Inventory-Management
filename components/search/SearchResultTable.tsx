@@ -12,6 +12,7 @@ export default function SearchResultTable({ items }: { items: ProductSearchResul
   function handleClick(id: string) {
     const now = Date.now()
     if (lastTap.current?.id === id && now - lastTap.current.time < 400) {
+      window.scrollTo(0, 0)
       router.push(`/inventory?id=${id}`)
       lastTap.current = null
     } else {
