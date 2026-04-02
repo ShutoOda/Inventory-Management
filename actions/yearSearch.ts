@@ -28,7 +28,7 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
 
   const { data, error } = await supabase
     .from('products')
-    .select('id, name, code_number, stock_records(date, total, condition, condition_text, memo)')
+    .select('id, name, code_number, stock_records(date, total, condition, condition_text, memo, updated_at)')
     .order('code_number', { ascending: true })
 
   if (error) return []
@@ -43,6 +43,7 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
       condition: string
       condition_text: string | null
       memo: string | null
+      updated_at: string
     }[]
   }
 
@@ -58,10 +59,13 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
     // 年度内の最新日付のレコードを取得
     const latest = recordsInYear.reduce((a, b) => (a.date! > b.date! ? a : b))
 
-    // 年度内でメモが入力されている最後のレコードのメモを取得
+    // 年度内でメモが入力されている最後のレコードのメモを取得（同日の場合は updated_at が新しい方）
     const withMemo = recordsInYear.filter(r => r.memo)
     const lastMemo = withMemo.length > 0
-      ? withMemo.reduce((a, b) => (a.date! >= b.date! ? a : b)).memo
+      ? withMemo.reduce((a, b) => {
+          if (a.date! !== b.date!) return a.date! > b.date! ? a : b
+          return a.updated_at >= b.updated_at ? a : b
+        }).memo
       : null
 
     results.push({
