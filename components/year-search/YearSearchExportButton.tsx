@@ -1,42 +1,38 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { exportAllByYear } from '@/actions/yearSearch'
+import { exportAllByYear, exportAllRecordsByYear } from '@/actions/yearSearch'
 
 type Props = {
   year: number
   disabled: boolean
+  exportAll?: boolean
 }
 
-export default function YearSearchExportButton({ year, disabled }: Props) {
+export default function YearSearchExportButton({ year, disabled, exportAll = false }: Props) {
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
 
-  function handleExport() {
-    setError(null)
-    startTransition(async () => {
-      const items = await exportAllByYear(year)
+  function buildHtml(items: { date: string; code_number: string; product_name: string; total: number; condition: string; condition_text: string | null; shikake: string | null }[], title: string, subtitle: string) {
+    const conditionLabel = (condition: string, conditionText: string | null) =>
+      condition === '自由入力' ? (conditionText || '自由入力') : condition
 
-      // ブラウザの印刷機能を使ってPDF出力（日本語対応）
-      const conditionLabel = (condition: string, conditionText: string | null) =>
-        condition === '自由入力' ? (conditionText || '自由入力') : condition
+    const rows = items.map(item => `
+      <tr>
+        <td>${item.date}</td>
+        <td>${item.code_number}</td>
+        <td>${item.product_name}</td>
+        <td style="text-align:right">${item.total.toLocaleString('ja-JP')}</td>
+        <td>${conditionLabel(item.condition, item.condition_text)}</td>
+        <td>${item.shikake ?? ''}</td>
+      </tr>
+    `).join('')
 
-      const rows = items.map(item => `
-        <tr>
-          <td>${item.date}</td>
-          <td>${item.code_number}</td>
-          <td>${item.product_name}</td>
-          <td style="text-align:right">${item.total.toLocaleString('ja-JP')}</td>
-          <td>${conditionLabel(item.condition, item.condition_text)}</td>
-          <td>${item.shikake ?? ''}</td>
-        </tr>
-      `).join('')
-
-      const html = `<!DOCTYPE html>
+    return `<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>製品在庫年度検索 ${year}年度</title>
+  <title>${title}</title>
   <style>
     body { font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif; font-size: 12px; margin: 20px; }
     h1 { font-size: 16px; margin-bottom: 4px; }
@@ -49,8 +45,8 @@ export default function YearSearchExportButton({ year, disabled }: Props) {
   </style>
 </head>
 <body>
-  <h1>製品在庫年度検索　${year}年度（${year}/04/01 〜 ${year + 1}/03/31）</h1>
-  <p>全 ${items.length} 件</p>
+  <h1>${title}</h1>
+  <p>${subtitle}　全 ${items.length} 件</p>
   <table>
     <thead>
       <tr>
@@ -66,6 +62,20 @@ export default function YearSearchExportButton({ year, disabled }: Props) {
   </table>
 </body>
 </html>`
+  }
+
+  function handleExport() {
+    setError(null)
+    startTransition(async () => {
+      const items = exportAll
+        ? await exportAllRecordsByYear(year)
+        : await exportAllByYear(year)
+
+      const period = `${year}/04/01 〜 ${year + 1}/03/31`
+      const title = exportAll
+        ? `製品在庫年度検索　${year}年度　全件（${period}）`
+        : `製品在庫年度検索　${year}年度（${period}）`
+      const html = buildHtml(items, title, `${year}年度`)
 
       const printWindow = window.open('', '_blank')
       if (!printWindow) {

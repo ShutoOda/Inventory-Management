@@ -94,3 +94,62 @@ export async function searchByYear(year: number, page: number): Promise<YearSear
 export async function exportAllByYear(year: number): Promise<YearSearchResultItem[]> {
   return fetchAllByYear(year)
 }
+
+export type AllRecordExportItem = {
+  date: string
+  code_number: string
+  product_name: string
+  total: number
+  condition: string
+  condition_text: string | null
+  shikake: string | null
+}
+
+export async function exportAllRecordsByYear(year: number): Promise<AllRecordExportItem[]> {
+  const supabase = await createClient()
+  const from = `${year}-04-01`
+  const to = `${year + 1}-03-31`
+
+  const { data, error } = await supabase
+    .from('products')
+    .select('name, code_number, stock_records(date, total, condition, condition_text, shikake, date_order)')
+    .order('code_number', { ascending: true })
+
+  if (error) return []
+
+  type Row = {
+    name: string
+    code_number: string
+    stock_records: {
+      date: string | null
+      total: number
+      condition: string
+      condition_text: string | null
+      shikake: string | null
+      date_order: number
+    }[]
+  }
+
+  const results: AllRecordExportItem[] = []
+  for (const product of (data ?? []) as Row[]) {
+    for (const r of product.stock_records) {
+      if (!r.date || r.date < from || r.date > to) continue
+      results.push({
+        date: r.date,
+        code_number: product.code_number,
+        product_name: product.name,
+        total: r.total,
+        condition: r.condition,
+        condition_text: r.condition_text,
+        shikake: r.shikake,
+      })
+    }
+  }
+
+  results.sort((a, b) => {
+    if (a.code_number !== b.code_number) return a.code_number < b.code_number ? -1 : 1
+    return a.date < b.date ? -1 : 1
+  })
+
+  return results
+}

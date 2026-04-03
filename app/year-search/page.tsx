@@ -7,16 +7,17 @@ import YearSearchExportButton from '@/components/year-search/YearSearchExportBut
 import Pagination from '@/components/search/Pagination'
 
 type PageProps = {
-  searchParams: Promise<{ year?: string; searched?: string; page?: string }>
+  searchParams: Promise<{ year?: string; searched?: string; page?: string; all?: string }>
 }
 
 export default async function YearSearchPage({ searchParams }: PageProps) {
   const params = await searchParams
   const searched = params.searched === 'true'
   const year = Number(params.year) || 0
+  const exportAll = params.all === 'true'
   const currentPage = Math.max(1, Number(params.page) || 1)
 
-  const { items, total } = searched && year
+  const { items, total } = searched && year && !exportAll
     ? await searchByYear(year, currentPage)
     : { items: [], total: 0 }
 
@@ -50,23 +51,30 @@ export default async function YearSearchPage({ searchParams }: PageProps) {
         <div className="rounded-xl bg-white shadow-sm border border-gray-100">
           <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between">
             <span className="text-sm font-semibold text-slate-700">
-              検索結果
-              <span className="ml-2 text-slate-400 font-normal">{total} 件</span>
+              {exportAll ? (
+                <>{year}年度　全件エクスポート対象</>
+              ) : (
+                <>検索結果<span className="ml-2 text-slate-400 font-normal">{total} 件</span></>
+              )}
             </span>
             <div className="flex items-center gap-4">
-              {totalPages > 1 && (
+              {!exportAll && totalPages > 1 && (
                 <span className="text-xs text-slate-400">{currentPage} / {totalPages} ページ</span>
               )}
-              <YearSearchExportButton year={year} disabled={total === 0} />
+              <YearSearchExportButton year={year} disabled={!exportAll && total === 0} exportAll={exportAll} />
             </div>
           </div>
-          <YearSearchResultTable items={items} />
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            searchParamsString={baseParams.toString()}
-            basePath="/year-search"
-          />
+          {!exportAll && (
+            <>
+              <YearSearchResultTable items={items} />
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                searchParamsString={baseParams.toString()}
+                basePath="/year-search"
+              />
+            </>
+          )}
         </div>
       )}
     </div>

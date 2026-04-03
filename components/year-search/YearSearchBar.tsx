@@ -65,6 +65,7 @@ export default function YearSearchBar() {
 
   const initialYear = Number(sp.get('year')) || CURRENT_YEAR
   const [selectedYear, setSelectedYear] = useState<number>(initialYear)
+  const [exportAll, setExportAll] = useState(sp.get('all') === 'true')
 
   const isMountedRef = useRef(false)
   useEffect(() => {
@@ -75,6 +76,7 @@ export default function YearSearchBar() {
         if (saved) {
           const d = JSON.parse(saved)
           if (d.selectedYear) setSelectedYear(d.selectedYear)
+          if (d.exportAll !== undefined) setExportAll(d.exportAll)
         }
       } catch {}
     } else {
@@ -86,28 +88,42 @@ export default function YearSearchBar() {
   useEffect(() => {
     if (!isMountedRef.current) return
     const timeout = setTimeout(() => {
-      localStorage.setItem(DRAFT_KEY, JSON.stringify({ selectedYear }))
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ selectedYear, exportAll }))
     }, 500)
     return () => clearTimeout(timeout)
-  }, [selectedYear])
+  }, [selectedYear, exportAll])
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     startTransition(() => {
-      router.push(`/year-search?searched=true&year=${selectedYear}`)
+      const params = new URLSearchParams({ searched: 'true', year: String(selectedYear) })
+      if (exportAll) params.set('all', 'true')
+      router.push(`/year-search?${params.toString()}`)
     })
   }
 
   function handleReset() {
     setSelectedYear(CURRENT_YEAR)
+    setExportAll(false)
     router.push('/year-search')
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="block text-xs font-medium text-gray-500">年度（西暦）</label>
-        <YearPicker value={selectedYear} onChange={setSelectedYear} />
+      <div className="flex items-end gap-4">
+        <div>
+          <label className="block text-xs font-medium text-gray-500">年度（西暦）</label>
+          <YearPicker value={selectedYear} onChange={setSelectedYear} />
+        </div>
+        <label className="flex items-center gap-2 mb-2 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={exportAll}
+            onChange={e => setExportAll(e.target.checked)}
+            className="w-4 h-4 rounded border-gray-300 text-slate-800 focus:ring-slate-400"
+          />
+          <span className="text-sm text-gray-700">全て</span>
+        </label>
       </div>
 
       <div className="flex items-center justify-between pt-2 border-t border-gray-100">
