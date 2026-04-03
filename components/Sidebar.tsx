@@ -15,7 +15,7 @@ const navItems = [
     ),
   },
   {
-    label: '製品在庫年度検索',
+    label: '製品在庫年度一覧',
     href: '/year-search',
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
