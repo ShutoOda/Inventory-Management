@@ -97,10 +97,14 @@ export async function exportAllByYear(year: number): Promise<YearSearchResultIte
 
 export type AllRecordExportRecord = {
   date: string
+  status: string
+  quantity: number
+  ng: number
   total: number
   condition: string
   condition_text: string | null
   shikake: string | null
+  memo: string | null
 }
 
 export type AllRecordExportProduct = {
@@ -117,7 +121,7 @@ export async function exportAllRecordsByYear(year: number): Promise<AllRecordExp
 
   const { data, error } = await supabase
     .from('products')
-    .select('name, code_number, storage_location, stock_records(date, total, condition, condition_text, shikake, date_order)')
+    .select('name, code_number, storage_location, stock_records(date, status, quantity, ng, total, condition, condition_text, shikake, memo, date_order)')
     .order('code_number', { ascending: true })
 
   if (error) return []
@@ -128,10 +132,14 @@ export async function exportAllRecordsByYear(year: number): Promise<AllRecordExp
     storage_location: string
     stock_records: {
       date: string | null
+      status: string
+      quantity: number
+      ng: number
       total: number
       condition: string
       condition_text: string | null
       shikake: string | null
+      memo: string | null
       date_order: number
     }[]
   }
@@ -143,10 +151,14 @@ export async function exportAllRecordsByYear(year: number): Promise<AllRecordExp
       .sort((a, b) => a.date! < b.date! ? -1 : 1)
       .map(r => ({
         date: r.date!,
+        status: r.status,
+        quantity: r.quantity,
+        ng: r.ng,
         total: r.total,
         condition: r.condition,
         condition_text: r.condition_text,
         shikake: r.shikake,
+        memo: r.memo,
       }))
     if (records.length === 0) continue
     results.push({

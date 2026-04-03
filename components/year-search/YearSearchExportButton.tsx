@@ -24,9 +24,13 @@ export default function YearSearchExportButton({ year, disabled, exportAll = fal
       const rows = p.records.map(r => `
         <tr>
           <td>${r.date.replace(/-/g, '/')}</td>
+          <td>${r.status === '+' ? '入庫' : '出庫'}</td>
+          <td style="text-align:right">${r.quantity.toLocaleString('ja-JP')}</td>
+          <td style="text-align:right">${r.status === '-' && r.ng ? r.ng.toLocaleString('ja-JP') : ''}</td>
           <td style="text-align:right">${r.total.toLocaleString('ja-JP')}</td>
           <td>${conditionLabel(r.condition, r.condition_text)}</td>
           <td>${r.shikake ?? ''}</td>
+          <td>${r.memo ?? ''}</td>
         </tr>
       `).join('')
       return `
@@ -39,9 +43,13 @@ export default function YearSearchExportButton({ year, disabled, exportAll = fal
             <thead>
               <tr>
                 <th>日付</th>
+                <th>入出庫</th>
+                <th>数量</th>
+                <th>NG</th>
                 <th>総数</th>
                 <th>状況</th>
                 <th>仕掛</th>
+                <th>メモ</th>
               </tr>
             </thead>
             <tbody>${rows}</tbody>
@@ -66,7 +74,6 @@ export default function YearSearchExportButton({ year, disabled, exportAll = fal
     table { width: 100%; border-collapse: collapse; }
     th, td { border: 1px solid #ccc; padding: 5px 8px; text-align: left; }
     th { background: #f0f0f0; font-weight: bold; }
-    td:nth-child(2) { text-align: right; }
     @media print { body { margin: 10mm; } }
   </style>
 </head>
