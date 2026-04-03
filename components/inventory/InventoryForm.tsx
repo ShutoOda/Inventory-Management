@@ -144,10 +144,11 @@ export default function InventoryForm({ mode, product }: Props) {
   // ━━ localStorage 自動保存（スリープ後データ消失対策）━━
   const draftKey = currentId ? `inventory-draft-${currentId}` : 'inventory-draft-new'
   const isMountedRef = useRef(false)
-  const isEditMode = !!currentId
 
   useEffect(() => {
-    if (isEditMode) {
+    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
+    const isReload = nav?.type === 'reload'
+    if (isReload) {
       try {
         const saved = localStorage.getItem(draftKey)
         if (saved) {
@@ -156,7 +157,7 @@ export default function InventoryForm({ mode, product }: Props) {
         }
       } catch {}
     } else {
-      localStorage.removeItem('inventory-draft-new')
+      localStorage.removeItem(draftKey)
     }
     isMountedRef.current = true
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
