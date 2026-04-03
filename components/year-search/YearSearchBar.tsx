@@ -56,6 +56,8 @@ function YearPicker({ value, onChange }: { value: number; onChange: (y: number) 
   )
 }
 
+const DRAFT_KEY = 'year-search-form-draft'
+
 export default function YearSearchBar() {
   const router = useRouter()
   const sp = useSearchParams()
@@ -63,6 +65,31 @@ export default function YearSearchBar() {
 
   const initialYear = Number(sp.get('year')) || CURRENT_YEAR
   const [selectedYear, setSelectedYear] = useState<number>(initialYear)
+
+  const isMountedRef = useRef(false)
+  useEffect(() => {
+    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
+    if (nav?.type === 'reload') {
+      try {
+        const saved = localStorage.getItem(DRAFT_KEY)
+        if (saved) {
+          const d = JSON.parse(saved)
+          if (d.selectedYear) setSelectedYear(d.selectedYear)
+        }
+      } catch {}
+    } else {
+      localStorage.removeItem(DRAFT_KEY)
+    }
+    isMountedRef.current = true
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!isMountedRef.current) return
+    const timeout = setTimeout(() => {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ selectedYear }))
+    }, 500)
+    return () => clearTimeout(timeout)
+  }, [selectedYear])
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()

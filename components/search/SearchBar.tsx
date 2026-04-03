@@ -1,8 +1,10 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect, useRef } from 'react'
 import Link from 'next/link'
+
+const DRAFT_KEY = 'search-form-draft'
 
 export default function SearchBar() {
   const router = useRouter()
@@ -14,6 +16,35 @@ export default function SearchBar() {
   const [codeNumber, setCodeNumber] = useState(sp.get('code_number') ?? '')
   const [storageLocation, setStorageLocation] = useState(sp.get('storage_location') ?? '')
   const [memo, setMemo] = useState(sp.get('memo') ?? '')
+
+  const isMountedRef = useRef(false)
+  useEffect(() => {
+    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
+    if (nav?.type === 'reload') {
+      try {
+        const saved = localStorage.getItem(DRAFT_KEY)
+        if (saved) {
+          const d = JSON.parse(saved)
+          if (d.date !== undefined) setDate(d.date)
+          if (d.name !== undefined) setName(d.name)
+          if (d.codeNumber !== undefined) setCodeNumber(d.codeNumber)
+          if (d.storageLocation !== undefined) setStorageLocation(d.storageLocation)
+          if (d.memo !== undefined) setMemo(d.memo)
+        }
+      } catch {}
+    } else {
+      localStorage.removeItem(DRAFT_KEY)
+    }
+    isMountedRef.current = true
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!isMountedRef.current) return
+    const timeout = setTimeout(() => {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ date, name, codeNumber, storageLocation, memo }))
+    }, 500)
+    return () => clearTimeout(timeout)
+  }, [date, name, codeNumber, storageLocation, memo])
 
   function buildParams() {
     const params = new URLSearchParams()
