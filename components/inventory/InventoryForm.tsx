@@ -193,7 +193,14 @@ export default function InventoryForm({ mode, product }: Props) {
   }
 
   function updateRow<K extends keyof RowData>(clientId: string, key: K, value: RowData[K]) {
-    setRows(prev => prev.map(r => r.clientId === clientId ? { ...r, [key]: value } : r))
+    setRows(prev => prev.map(r => {
+      if (r.clientId !== clientId) return r
+      const updated = { ...r, [key]: value }
+      if ((key === 'quantity' || key === 'ng' || key === 'status') && r.condition === '検済') {
+        updated.totalManual = ''
+      }
+      return updated
+    }))
   }
 
   function addRow() {
