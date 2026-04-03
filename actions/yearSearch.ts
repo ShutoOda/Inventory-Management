@@ -28,8 +28,10 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
 
   const { data, error } = await supabase
     .from('products')
-    .select('id, name, code_number, stock_records(date, total, condition, condition_text, shikake, date_order)')
+    .select('id, name, code_number, stock_records!inner(date, total, condition, condition_text, shikake, date_order)')
     .order('code_number', { ascending: true })
+    .gte('stock_records.date', from)
+    .lte('stock_records.date', to)
 
   if (error) return []
 
@@ -51,10 +53,7 @@ async function fetchAllByYear(year: number): Promise<YearSearchResultItem[]> {
   const results: YearSearchResultItem[] = []
 
   for (const product of rows) {
-    const recordsInYear = product.stock_records.filter(
-      r => r.date && r.date >= from && r.date <= to
-    )
-    if (recordsInYear.length === 0) continue
+    const recordsInYear = product.stock_records.filter(r => r.date)
 
     // 年度内の最新日付のレコードを取得
     const latest = recordsInYear.reduce((a, b) => (a.date! > b.date! ? a : b))
@@ -121,8 +120,10 @@ export async function exportAllRecordsByYear(year: number): Promise<AllRecordExp
 
   const { data, error } = await supabase
     .from('products')
-    .select('name, code_number, storage_location, stock_records(date, status, quantity, ng, total, condition, condition_text, shikake, memo, date_order)')
+    .select('name, code_number, storage_location, stock_records!inner(date, status, quantity, ng, total, condition, condition_text, shikake, memo, date_order)')
     .order('code_number', { ascending: true })
+    .gte('stock_records.date', from)
+    .lte('stock_records.date', to)
 
   if (error) return []
 
@@ -147,7 +148,7 @@ export async function exportAllRecordsByYear(year: number): Promise<AllRecordExp
   const results: AllRecordExportProduct[] = []
   for (const product of (data ?? []) as Row[]) {
     const records = product.stock_records
-      .filter(r => r.date && r.date >= from && r.date <= to)
+      .filter(r => r.date)
       .sort((a, b) => a.date! < b.date! ? -1 : 1)
       .map(r => ({
         date: r.date!,
