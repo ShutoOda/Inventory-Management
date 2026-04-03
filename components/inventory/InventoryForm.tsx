@@ -466,7 +466,7 @@ export default function InventoryForm({ mode, product }: Props) {
                     <td className="px-1 py-1">
                       {row.condition === '検済' ? (
                         <input type="text" inputMode="numeric"
-                          value={formatNum(row.totalManual)}
+                          value={row.totalManual !== '' ? formatNum(row.totalManual) : formatTotal(row.total)}
                           onChange={e => updateRow(row.clientId, 'totalManual', toDigits(e.target.value))}
                           disabled={allDisabled}
                           className={`${cellInput} text-right`}
