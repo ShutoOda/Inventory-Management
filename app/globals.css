@@ -25,6 +25,12 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Restore native date picker on iOS/iPadOS */
+input[type="date"] {
+  -webkit-appearance: auto;
+  appearance: auto;
+}
+
 /* Hide Vercel toolbar in preview deployments */
 vercel-toolbar,
 #vercel-toolbar,
