@@ -148,7 +148,8 @@ export async function exportAllRecordsByYear(year: number): Promise<AllRecordExp
 
   results.sort((a, b) => {
     if (a.code_number !== b.code_number) return a.code_number < b.code_number ? -1 : 1
-    return a.date < b.date ? -1 : 1
+    if (a.date !== b.date) return a.date < b.date ? -1 : 1
+    return a.product_name < b.product_name ? -1 : a.product_name > b.product_name ? 1 : 0
   })
 
   return results
