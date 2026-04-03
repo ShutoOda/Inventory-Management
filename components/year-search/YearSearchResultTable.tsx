@@ -27,7 +27,7 @@ export default function YearSearchResultTable({ items }: { items: YearSearchResu
           {items.map((item, i) => (
             <tr key={item.product_id} className="border-b border-gray-50" style={{ backgroundColor: i % 2 === 0 ? '#fff0f3' : '#ffffff' }}>
               <td className="px-5 py-3.5 text-sm text-gray-500 whitespace-nowrap">{item.date}</td>
-              <td className="px-5 py-3.5 text-sm text-gray-500 font-mono whitespace-nowrap">{item.code_number}</td>
+              <td className="px-5 py-3.5 text-sm text-gray-500 font-mono whitespace-nowrap" style={{ textDecoration: 'none' }}>{item.code_number}</td>
               <td className="px-5 py-3.5 text-sm text-gray-500 max-w-[200px] truncate">
                 <LongPressText text={item.product_name} />
               </td>

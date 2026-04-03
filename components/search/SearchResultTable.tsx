@@ -52,7 +52,7 @@ export default function SearchResultTable({ items }: { items: ProductSearchResul
               <td className="px-5 py-3.5 text-sm text-gray-500 max-w-[200px] truncate">
                 <LongPressText text={item.name} />
               </td>
-              <td className="px-5 py-3.5 text-sm text-gray-500 font-mono">{item.code_number}</td>
+              <td className="px-5 py-3.5 text-sm text-gray-500 font-mono no-underline" style={{ textDecoration: 'none' }}>{item.code_number}</td>
               <td className="px-5 py-3.5 text-sm text-gray-500">{item.storage_location}</td>
               <td className="px-5 py-3.5 text-sm text-gray-500 text-right">
                 {item.latest_total != null ? item.latest_total.toLocaleString('ja-JP') : ''}
