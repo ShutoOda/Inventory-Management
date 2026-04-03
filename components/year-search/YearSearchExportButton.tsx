@@ -64,6 +64,7 @@ export default function YearSearchExportButton({ year, disabled, exportAll = fal
   <meta charset="UTF-8">
   <title>製品在庫年度検索 ${year}年度 全件</title>
   <style>
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     body { font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif; font-size: 12px; margin: 20px; }
     h1 { font-size: 16px; margin-bottom: 4px; }
     .summary { font-size: 11px; color: #555; margin-bottom: 16px; }
