@@ -16,6 +16,9 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: '在庫管理システム',
   description: '在庫の登録・検索・管理',
+  other: {
+    'format-detection': 'telephone=no',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

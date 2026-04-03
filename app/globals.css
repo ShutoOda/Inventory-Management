@@ -25,6 +25,13 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Prevent iOS Safari from auto-linking phone-number-like text */
+a[href^="tel"] {
+  text-decoration: none !important;
+  color: inherit !important;
+  pointer-events: none;
+}
+
 /* Hide Vercel toolbar in preview deployments */
 vercel-toolbar,
 #vercel-toolbar,
