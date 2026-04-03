@@ -95,24 +95,29 @@ export async function exportAllByYear(year: number): Promise<YearSearchResultIte
   return fetchAllByYear(year)
 }
 
-export type AllRecordExportItem = {
+export type AllRecordExportRecord = {
   date: string
-  code_number: string
-  product_name: string
   total: number
   condition: string
   condition_text: string | null
   shikake: string | null
 }
 
-export async function exportAllRecordsByYear(year: number): Promise<AllRecordExportItem[]> {
+export type AllRecordExportProduct = {
+  product_name: string
+  code_number: string
+  storage_location: string
+  records: AllRecordExportRecord[]
+}
+
+export async function exportAllRecordsByYear(year: number): Promise<AllRecordExportProduct[]> {
   const supabase = await createClient()
   const from = `${year}-04-01`
   const to = `${year + 1}-03-31`
 
   const { data, error } = await supabase
     .from('products')
-    .select('name, code_number, stock_records(date, total, condition, condition_text, shikake, date_order)')
+    .select('name, code_number, storage_location, stock_records(date, total, condition, condition_text, shikake, date_order)')
     .order('code_number', { ascending: true })
 
   if (error) return []
@@ -120,6 +125,7 @@ export async function exportAllRecordsByYear(year: number): Promise<AllRecordExp
   type Row = {
     name: string
     code_number: string
+    storage_location: string
     stock_records: {
       date: string | null
       total: number
@@ -130,27 +136,26 @@ export async function exportAllRecordsByYear(year: number): Promise<AllRecordExp
     }[]
   }
 
-  const results: AllRecordExportItem[] = []
+  const results: AllRecordExportProduct[] = []
   for (const product of (data ?? []) as Row[]) {
-    for (const r of product.stock_records) {
-      if (!r.date || r.date < from || r.date > to) continue
-      results.push({
-        date: r.date,
-        code_number: product.code_number,
-        product_name: product.name,
+    const records = product.stock_records
+      .filter(r => r.date && r.date >= from && r.date <= to)
+      .sort((a, b) => a.date! < b.date! ? -1 : 1)
+      .map(r => ({
+        date: r.date!,
         total: r.total,
         condition: r.condition,
         condition_text: r.condition_text,
         shikake: r.shikake,
-      })
-    }
+      }))
+    if (records.length === 0) continue
+    results.push({
+      product_name: product.name,
+      code_number: product.code_number,
+      storage_location: product.storage_location,
+      records,
+    })
   }
-
-  results.sort((a, b) => {
-    if (a.code_number !== b.code_number) return a.code_number < b.code_number ? -1 : 1
-    if (a.date !== b.date) return a.date < b.date ? -1 : 1
-    return a.product_name < b.product_name ? -1 : a.product_name > b.product_name ? 1 : 0
-  })
 
   return results
 }
