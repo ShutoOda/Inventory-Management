@@ -16,7 +16,7 @@ const navItems: { label: ReactNode; href: string; icon: ReactNode }[] = [
     ),
   },
   {
-    label: <>製品在庫年度<br />一覧</>,
+    label: <>製品在庫<br />年度別一覧</>,
     href: '/year-search',
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

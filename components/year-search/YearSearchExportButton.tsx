@@ -62,7 +62,7 @@ export default function YearSearchExportButton({ year, disabled, exportAll = fal
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>製品在庫年度一覧 ${year}年度 全件</title>
+  <title>製品在庫年度別一覧 ${year}年度 全件</title>
   <style>
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     body { font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif; font-size: 12px; margin: 20px; }
@@ -79,7 +79,7 @@ export default function YearSearchExportButton({ year, disabled, exportAll = fal
   </style>
 </head>
 <body>
-  <h1>製品在庫年度一覧　${year}年度　全件</h1>
+  <h1>製品在庫年度別一覧　${year}年度　全件</h1>
   <p class="summary">${period}　全 ${totalProducts} 製品</p>
   ${sections}
 </body>
@@ -102,7 +102,7 @@ export default function YearSearchExportButton({ year, disabled, exportAll = fal
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>製品在庫年度一覧 ${year}年度</title>
+  <title>製品在庫年度別一覧 ${year}年度</title>
   <style>
     body { font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif; font-size: 12px; margin: 20px; }
     h1 { font-size: 16px; margin-bottom: 4px; }
@@ -115,7 +115,7 @@ export default function YearSearchExportButton({ year, disabled, exportAll = fal
   </style>
 </head>
 <body>
-  <h1>製品在庫年度一覧　${year}年度（${period}）</h1>
+  <h1>製品在庫年度別一覧　${year}年度（${period}）</h1>
   <p>全 ${items.length} 件</p>
   <table>
     <thead>

@@ -30,7 +30,7 @@ export default async function YearSearchPage({ searchParams }: PageProps) {
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="text-xl font-bold text-slate-800">製品在庫年度一覧</h2>
+        <h2 className="text-xl font-bold text-slate-800">製品在庫年度別一覧</h2>
         <p className="mt-1 text-sm text-slate-500">年度別の在庫情報を検索・確認できます</p>
       </div>
 
