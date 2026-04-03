@@ -422,7 +422,7 @@ export default function InventoryForm({ mode, product }: Props) {
                       <input type="date" value={row.date}
                         onChange={e => updateRow(row.clientId, 'date', e.target.value)}
                         disabled={allDisabled} className={cellInput}
-                        style={{ minWidth: 0, WebkitAppearance: 'auto' } as React.CSSProperties}
+                        style={{ minWidth: 0, WebkitAppearance: 'auto' } as unknown as React.CSSProperties}
                         onKeyDown={handleEnterKey} />
                     </td>
                     <td className="px-1 py-1">
