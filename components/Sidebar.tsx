@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import type { ReactNode } from 'react'
 
-const navItems = [
+const navItems: { label: ReactNode; href: string; icon: ReactNode }[] = [
   {
     label: '製品在庫一覧',
     href: '/search',
@@ -15,7 +16,7 @@ const navItems = [
     ),
   },
   {
-    label: '製品在庫年度一覧',
+    label: <>製品在庫年度<br />一覧</>,
     href: '/year-search',
     icon: (
       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
