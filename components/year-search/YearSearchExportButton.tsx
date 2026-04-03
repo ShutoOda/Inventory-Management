@@ -21,8 +21,8 @@ export default function YearSearchExportButton({ year, disabled, exportAll = fal
     const totalProducts = products.length
 
     const sections = products.map(p => {
-      const rows = p.records.map(r => `
-        <tr>
+      const rows = p.records.map((r, ri) => `
+        <tr style="background-color:${ri % 2 === 0 ? '#fff0f3' : '#ffffff'}">
           <td>${r.date.replace(/-/g, '/')}</td>
           <td>${r.status === '+' ? '入庫' : '出庫'}</td>
           <td style="text-align:right">${r.quantity.toLocaleString('ja-JP')}</td>
