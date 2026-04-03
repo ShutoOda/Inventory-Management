@@ -141,6 +141,42 @@ export default function InventoryForm({ mode, product }: Props) {
     }
   }, [longPressTooltip])
 
+  // ━━ localStorage 自動保存（スリープ後データ消失対策）━━
+  const draftKey = currentId ? `inventory-draft-${currentId}` : 'inventory-draft-new'
+  const isMountedRef = useRef(false)
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(draftKey)
+      if (saved) {
+        const parsed = JSON.parse(saved) as RowData[]
+        if (parsed.length > 0) setRows(parsed)
+      }
+    } catch {}
+    isMountedRef.current = true
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!isMountedRef.current) return
+    const timeout = setTimeout(() => {
+      localStorage.setItem(draftKey, JSON.stringify(rows))
+    }, 500)
+    return () => clearTimeout(timeout)
+  }, [rows, draftKey])
+
+  // ━━ Enter キーで次の入力項目へ移動 ━━
+  function handleEnterKey(e: React.KeyboardEvent<HTMLInputElement | HTMLSelectElement>) {
+    if (e.key !== 'Enter') return
+    e.preventDefault()
+    const table = (e.currentTarget as HTMLElement).closest('table')
+    if (!table) return
+    const focusable = Array.from(
+      table.querySelectorAll<HTMLElement>('input:not([disabled]):not([readonly]), select:not([disabled])')
+    )
+    const idx = focusable.indexOf(e.currentTarget as HTMLElement)
+    if (idx >= 0 && idx < focusable.length - 1) focusable[idx + 1].focus()
+  }
+
   // 編集モードで製品が存在しない（削除済みでもない）場合はエラー表示
   if (mode === 'edit' && !product && !deleted && !savedId && pendingAction !== 'delete') {
     return (
@@ -211,6 +247,7 @@ export default function InventoryForm({ mode, product }: Props) {
     startTransition(async () => {
       const result = await createProduct(name, codeNumber, storageLocation, buildRecords())
       if (result.success && result.id) {
+        localStorage.removeItem('inventory-draft-new')
         setSavedId(result.id)
         setNotice('正常に登録されました')
       } else {
@@ -229,6 +266,7 @@ export default function InventoryForm({ mode, product }: Props) {
     startTransition(async () => {
       const result = await updateProduct(currentId, name, codeNumber, storageLocation, buildRecords())
       if (result.success) {
+        localStorage.removeItem(draftKey)
         setNotice('更新しました')
       } else {
         setError(result.error ?? '更新に失敗しました')
@@ -350,7 +388,7 @@ export default function InventoryForm({ mode, product }: Props) {
 
         <div className="rounded-md border border-gray-200" style={{ overflowX: 'auto', overflowY: 'auto', WebkitOverflowScrolling: 'touch', maxHeight: '384px' } as React.CSSProperties}>
           <table className="border-collapse text-sm" style={{ minWidth: 860 }}>
-            <thead>
+            <thead className="sticky top-0 z-10 bg-gray-50">
               <tr className="bg-gray-50">
                 <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 80 }}>日付</th>
                 <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 100 }}>入出庫</th>
@@ -384,12 +422,14 @@ export default function InventoryForm({ mode, product }: Props) {
                       <input type="date" value={row.date}
                         onChange={e => updateRow(row.clientId, 'date', e.target.value)}
                         disabled={allDisabled} className={cellInput}
-                        style={{ WebkitAppearance: 'none', appearance: 'none', minWidth: 0 } as React.CSSProperties} />
+                        style={{ minWidth: 0 }}
+                        onKeyDown={handleEnterKey} />
                     </td>
                     <td className="px-1 py-1">
                       <select value={row.status}
                         onChange={e => updateRow(row.clientId, 'status', e.target.value as '+' | '-')}
-                        disabled={allDisabled} className={cellSelect}>
+                        disabled={allDisabled} className={cellSelect}
+                        onKeyDown={handleEnterKey}>
                         <option value="+">＋ 入庫</option>
                         <option value="-">－ 出庫</option>
                       </select>
@@ -398,7 +438,8 @@ export default function InventoryForm({ mode, product }: Props) {
                       <input type="text" inputMode="numeric"
                         value={formatNum(row.quantity)}
                         onChange={e => updateRow(row.clientId, 'quantity', toDigits(e.target.value))}
-                        disabled={allDisabled} className={`${cellInput} text-right`} />
+                        disabled={allDisabled} className={`${cellInput} text-right`}
+                        onKeyDown={handleEnterKey} />
                     </td>
                     <td className="px-1 py-1">
                       <input type="text" inputMode="numeric"
@@ -406,7 +447,8 @@ export default function InventoryForm({ mode, product }: Props) {
                         onChange={e => updateRow(row.clientId, 'ng', toDigits(e.target.value))}
                         disabled={allDisabled || row.status === '+'}
                         placeholder=""
-                        className={`${cellInput} text-right`} />
+                        className={`${cellInput} text-right`}
+                        onKeyDown={handleEnterKey} />
                     </td>
                     <td className="px-1 py-1">
                       {row.condition === '検済' ? (
@@ -414,7 +456,8 @@ export default function InventoryForm({ mode, product }: Props) {
                           value={formatNum(row.totalManual)}
                           onChange={e => updateRow(row.clientId, 'totalManual', toDigits(e.target.value))}
                           disabled={allDisabled}
-                          className={`${cellInput} text-right`} />
+                          className={`${cellInput} text-right`}
+                          onKeyDown={handleEnterKey} />
                       ) : (
                         <input type="text" readOnly value={formatTotal(row.total)} tabIndex={-1}
                           disabled={allDisabled}
@@ -433,7 +476,8 @@ export default function InventoryForm({ mode, product }: Props) {
                             return { ...r, condition: newCondition, totalManual }
                           }))
                         }}
-                        disabled={allDisabled} className={cellSelect}>
+                        disabled={allDisabled} className={cellSelect}
+                        onKeyDown={handleEnterKey}>
                         <option value="検済">検済</option>
                         <option value="未検">未検</option>
                       </select>
@@ -443,6 +487,7 @@ export default function InventoryForm({ mode, product }: Props) {
                         onChange={e => updateRow(row.clientId, 'shikake', e.target.value)}
                         disabled={allDisabled} className={cellInput}
                         title={row.shikake || undefined}
+                        onKeyDown={handleEnterKey}
                         onPointerDown={e => startLongPress(row.shikake, e)}
                         onPointerUp={cancelLongPress}
                         onPointerLeave={cancelLongPress}
@@ -453,6 +498,7 @@ export default function InventoryForm({ mode, product }: Props) {
                         onChange={e => updateRow(row.clientId, 'memo', e.target.value)}
                         disabled={allDisabled} className={cellInput}
                         title={row.memo || undefined}
+                        onKeyDown={handleEnterKey}
                         onPointerDown={e => startLongPress(row.memo, e)}
                         onPointerUp={cancelLongPress}
                         onPointerLeave={cancelLongPress}

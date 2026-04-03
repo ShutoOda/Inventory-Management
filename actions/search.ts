@@ -4,6 +4,10 @@ import { createClient } from '@/lib/supabase/server'
 import type { SearchParams, SearchResult } from '@/lib/types'
 import { SEARCH_PAGE_SIZE as PAGE_SIZE } from '@/lib/constants'
 
+function normalize(str: string): string {
+  return str.normalize('NFKC').toLowerCase()
+}
+
 export async function searchInventory(params: SearchParams): Promise<SearchResult> {
   const supabase = await createClient()
   let query = supabase
@@ -11,19 +15,9 @@ export async function searchInventory(params: SearchParams): Promise<SearchResul
     .select('*, stock_records(date, memo, total)')
     .order('name', { ascending: true })
 
-  if (params.name) {
-    for (const token of params.name.trim().split(/\s+/)) {
-      query = query.ilike('name', `%${token}%`)
-    }
-  }
   if (params.code_number) {
     for (const token of params.code_number.trim().split(/\s+/)) {
       query = query.ilike('code_number', `%${token}%`)
-    }
-  }
-  if (params.storage_location) {
-    for (const token of params.storage_location.trim().split(/\s+/)) {
-      query = query.ilike('storage_location', `%${token}%`)
     }
   }
 
@@ -42,6 +36,15 @@ export async function searchInventory(params: SearchParams): Promise<SearchResul
 
   let results: Row[] = (data ?? []) as Row[]
 
+  if (params.name) {
+    const tokens = params.name.trim().split(/\s+/).map(normalize)
+    results = results.filter(p => tokens.every(t => normalize(p.name).includes(t)))
+  }
+  if (params.storage_location) {
+    const tokens = params.storage_location.trim().split(/\s+/).map(normalize)
+    results = results.filter(p => tokens.every(t => normalize(p.storage_location).includes(t)))
+  }
+
   if (params.date) {
     results = results.filter(p =>
       p.stock_records.some(r => r.date === params.date)
@@ -49,10 +52,10 @@ export async function searchInventory(params: SearchParams): Promise<SearchResul
   }
 
   if (params.memo) {
-    const tokens = params.memo.trim().toLowerCase().split(/\s+/)
+    const tokens = params.memo.trim().split(/\s+/).map(normalize)
     results = results.filter(p =>
       tokens.every(token =>
-        p.stock_records.some(r => r.memo?.toLowerCase().includes(token))
+        p.stock_records.some(r => r.memo && normalize(r.memo).includes(token))
       )
     )
   }
