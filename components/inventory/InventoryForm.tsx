@@ -144,15 +144,20 @@ export default function InventoryForm({ mode, product }: Props) {
   // ━━ localStorage 自動保存（スリープ後データ消失対策）━━
   const draftKey = currentId ? `inventory-draft-${currentId}` : 'inventory-draft-new'
   const isMountedRef = useRef(false)
+  const isEditMode = !!currentId
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(draftKey)
-      if (saved) {
-        const parsed = JSON.parse(saved) as RowData[]
-        if (parsed.length > 0) setRows(parsed)
-      }
-    } catch {}
+    if (isEditMode) {
+      try {
+        const saved = localStorage.getItem(draftKey)
+        if (saved) {
+          const parsed = JSON.parse(saved) as RowData[]
+          if (parsed.length > 0) setRows(parsed)
+        }
+      } catch {}
+    } else {
+      localStorage.removeItem('inventory-draft-new')
+    }
     isMountedRef.current = true
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
