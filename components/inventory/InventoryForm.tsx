@@ -5,6 +5,13 @@ import { useRouter } from 'next/navigation'
 import { createProduct, updateProduct, deleteProduct, type StockRecordInput } from '@/actions/product'
 import type { ProductWithRecords } from '@/lib/types'
 
+type BasicInfoRow = {
+  clientId: string
+  name: string
+  codeNumber: string
+  storageLocation: string
+}
+
 type RowData = {
   clientId: string
   date: string
@@ -25,6 +32,9 @@ type Props = {
 
 let _idCounter = 0
 const newClientId = () => String(++_idCounter)
+
+let _basicIdCounter = 0
+const newBasicId = () => `b${++_basicIdCounter}`
 
 function toDigits(s: string): string {
   return s.replace(/[^\d]/g, '')
@@ -87,10 +97,15 @@ export default function InventoryForm({ mode, product }: Props) {
   const isCreate = effectiveMode === 'create'
   const isEdit = effectiveMode === 'edit'
 
-  // 基本情報
-  const [name, setName] = useState(product?.name ?? '')
-  const [codeNumber, setCodeNumber] = useState(product?.code_number ?? '')
-  const [storageLocation, setStorageLocation] = useState(product?.storage_location ?? '')
+  // 基本情報（行）
+  const [basicRows, setBasicRows] = useState<BasicInfoRow[]>(() => [{
+    clientId: newBasicId(),
+    name: product?.name ?? '',
+    codeNumber: product?.code_number ?? '',
+    storageLocation: product?.storage_location ?? '',
+  }])
+
+  const isMultiProduct = isCreate && basicRows.length > 1
 
   // 在庫情報（行）
   const [rows, setRows] = useState<RowData[]>(() =>
@@ -192,6 +207,20 @@ export default function InventoryForm({ mode, product }: Props) {
     )
   }
 
+  // ━━ 基本情報の操作 ━━
+  function updateBasicRow<K extends keyof BasicInfoRow>(clientId: string, key: K, value: BasicInfoRow[K]) {
+    setBasicRows(prev => prev.map(r => r.clientId === clientId ? { ...r, [key]: value } : r))
+  }
+
+  function addBasicRow() {
+    setBasicRows(prev => [...prev, { clientId: newBasicId(), name: '', codeNumber: '', storageLocation: '' }])
+  }
+
+  function removeBasicRow(clientId: string) {
+    setBasicRows(prev => prev.filter(r => r.clientId !== clientId))
+  }
+
+  // ━━ 在庫情報の操作 ━━
   function updateRow<K extends keyof RowData>(clientId: string, key: K, value: RowData[K]) {
     setRows(prev => prev.map(r => {
       if (r.clientId !== clientId) return r
@@ -253,18 +282,34 @@ export default function InventoryForm({ mode, product }: Props) {
   }
 
   function handleCreate() {
-    if (!validateTotal()) return
     setError(null)
     setNotice(null)
     setPendingAction('create')
     startTransition(async () => {
-      const result = await createProduct(name, codeNumber, storageLocation, buildRecords())
-      if (result.success && result.id) {
-        localStorage.removeItem('inventory-draft-new')
-        setSavedId(result.id)
-        setNotice('正常に登録されました')
+      if (isMultiProduct) {
+        // 複数製品の一括登録（在庫情報なし）
+        const results = await Promise.all(
+          basicRows.map(r => createProduct(r.name, r.codeNumber, r.storageLocation, []))
+        )
+        const failed = results.find(r => !r.success)
+        if (failed) {
+          setError(failed.error ?? '登録に失敗しました')
+        } else {
+          localStorage.removeItem('inventory-draft-new')
+          setNotice(`${basicRows.length}件を登録しました`)
+        }
       } else {
-        setError(result.error ?? '登録に失敗しました')
+        // 単一製品の登録
+        if (!validateTotal()) { setPendingAction(null); return }
+        const r = basicRows[0]
+        const result = await createProduct(r.name, r.codeNumber, r.storageLocation, buildRecords())
+        if (result.success && result.id) {
+          localStorage.removeItem('inventory-draft-new')
+          setSavedId(result.id)
+          setNotice('正常に登録されました')
+        } else {
+          setError(result.error ?? '登録に失敗しました')
+        }
       }
       setPendingAction(null)
     })
@@ -277,7 +322,8 @@ export default function InventoryForm({ mode, product }: Props) {
     setNotice(null)
     setPendingAction('update')
     startTransition(async () => {
-      const result = await updateProduct(currentId, name, codeNumber, storageLocation, buildRecords())
+      const r = basicRows[0]
+      const result = await updateProduct(currentId, r.name, r.codeNumber, r.storageLocation, buildRecords())
       if (result.success) {
         localStorage.removeItem(draftKey)
         setNotice('更新しました')
@@ -332,47 +378,94 @@ export default function InventoryForm({ mode, product }: Props) {
       )}
 
       {/* ━━ 基本情報 ━━ */}
-      <section>
-        <h3 className="mb-3 border-b border-gray-200 pb-2 text-sm font-semibold text-gray-700">基本情報</h3>
-        <div className="flex flex-wrap gap-4">
-          <div className="flex-1 min-w-[140px]">
-            <label className="block text-sm font-medium text-gray-700">
-              製品名 <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              disabled={allDisabled}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
-            />
-          </div>
-          <div className="flex-1 min-w-[140px]">
-            <label className="block text-sm font-medium text-gray-700">
-              コード番号 <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={codeNumber}
-              onChange={e => setCodeNumber(e.target.value.replace(/[^\d-]/g, ''))}
-              disabled={allDisabled}
-              placeholder="半角数字・ハイフン"
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
-            />
-          </div>
-          <div className="flex-1 min-w-[140px]">
-            <label className="block text-sm font-medium text-gray-700">
-              保管場所 <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={storageLocation}
-              onChange={e => setStorageLocation(e.target.value)}
-              disabled={allDisabled}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400"
-            />
-          </div>
+      <section style={{ minWidth: 0 }}>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 pb-2">
+          <h3 className="text-sm font-semibold text-gray-700">基本情報</h3>
+          {isCreate && (
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={addBasicRow}
+                disabled={allDisabled}
+                className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                ＋ 行追加
+              </button>
+              <button
+                type="button"
+                onClick={() => basicRows.length > 1 && removeBasicRow(basicRows[basicRows.length - 1].clientId)}
+                disabled={allDisabled || basicRows.length <= 1}
+                className="rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                － 行削除
+              </button>
+            </div>
+          )}
         </div>
+
+        <div className="rounded-md border border-gray-200" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
+          <table className="border-collapse text-sm" style={{ minWidth: 560 }}>
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 200 }}>
+                  製品名 <span className="text-red-500">*</span>
+                </th>
+                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 160 }}>
+                  コード番号 <span className="text-red-500">*</span>
+                </th>
+                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 160 }}>
+                  保管場所 <span className="text-red-500">*</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {basicRows.map((r, i) => (
+                <tr
+                  key={r.clientId}
+                  style={{ backgroundColor: i % 2 === 0 ? '#fff0f3' : '#ffffff' }}
+                >
+                  <td className="px-1 py-1">
+                    <input
+                      type="text"
+                      value={r.name}
+                      onChange={e => updateBasicRow(r.clientId, 'name', e.target.value)}
+                      disabled={allDisabled}
+                      className={cellInput}
+                      onKeyDown={handleEnterKey}
+                    />
+                  </td>
+                  <td className="px-1 py-1">
+                    <input
+                      type="text"
+                      value={r.codeNumber}
+                      onChange={e => updateBasicRow(r.clientId, 'codeNumber', e.target.value.replace(/[^\d-]/g, ''))}
+                      disabled={allDisabled}
+                      placeholder="半角数字・ハイフン"
+                      className={cellInput}
+                      onKeyDown={handleEnterKey}
+                    />
+                  </td>
+                  <td className="px-1 py-1">
+                    <input
+                      type="text"
+                      value={r.storageLocation}
+                      onChange={e => updateBasicRow(r.clientId, 'storageLocation', e.target.value)}
+                      disabled={allDisabled}
+                      className={cellInput}
+                      onKeyDown={handleEnterKey}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {isMultiProduct && (
+          <p className="mt-2 text-xs text-amber-600">
+            基本情報が複数行の場合、在庫情報は登録できません。登録後に各製品の詳細画面から在庫情報を追加してください。
+          </p>
+        )}
       </section>
 
       {/* ━━ 在庫情報 ━━ */}
@@ -383,7 +476,7 @@ export default function InventoryForm({ mode, product }: Props) {
             <button
               type="button"
               onClick={addRow}
-              disabled={allDisabled}
+              disabled={allDisabled || isMultiProduct}
               className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
             >
               ＋ 行追加
@@ -391,7 +484,7 @@ export default function InventoryForm({ mode, product }: Props) {
             <button
               type="button"
               onClick={removeSelectedRow}
-              disabled={allDisabled || !selectedRowId}
+              disabled={allDisabled || !selectedRowId || isMultiProduct}
               className="rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
             >
               － 行削除
@@ -414,7 +507,13 @@ export default function InventoryForm({ mode, product }: Props) {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {displayRows.length === 0 ? (
+              {isMultiProduct ? (
+                <tr>
+                  <td colSpan={8} className="px-4 py-8 text-center text-xs text-gray-400">
+                    基本情報が複数行のため、在庫情報は入力できません
+                  </td>
+                </tr>
+              ) : displayRows.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-4 py-8 text-center text-xs text-gray-400">
                     「行追加」ボタンで在庫情報を追加してください
