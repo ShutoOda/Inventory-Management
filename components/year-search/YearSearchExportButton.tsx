@@ -157,7 +157,7 @@ export default function YearSearchExportButton({ year, disabled, exportAll = fal
         type="button"
         onClick={handleExport}
         disabled={disabled || isPending}
-        className="rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-40"
+        className="rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-400"
       >
         {isPending ? 'データ取得中...' : 'Export (PDF)'}
       </button>
