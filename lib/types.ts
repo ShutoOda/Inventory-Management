@@ -47,6 +47,7 @@ export type SearchParams = {
   code_number?: string
   storage_location?: string
   memo?: string
+  no_stock?: string
   page?: string
 }
 

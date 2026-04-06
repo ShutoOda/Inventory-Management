@@ -16,6 +16,7 @@ export default function SearchBar() {
   const [codeNumber, setCodeNumber] = useState(sp.get('code_number') ?? '')
   const [storageLocation, setStorageLocation] = useState(sp.get('storage_location') ?? '')
   const [memo, setMemo] = useState(sp.get('memo') ?? '')
+  const [noStock, setNoStock] = useState(sp.get('no_stock') === 'true')
 
   const isMountedRef = useRef(false)
   useEffect(() => {
@@ -30,6 +31,7 @@ export default function SearchBar() {
           if (d.codeNumber !== undefined) setCodeNumber(d.codeNumber)
           if (d.storageLocation !== undefined) setStorageLocation(d.storageLocation)
           if (d.memo !== undefined) setMemo(d.memo)
+          if (d.noStock !== undefined) setNoStock(d.noStock)
         }
       } catch {}
     } else {
@@ -41,10 +43,10 @@ export default function SearchBar() {
   useEffect(() => {
     if (!isMountedRef.current) return
     const timeout = setTimeout(() => {
-      localStorage.setItem(DRAFT_KEY, JSON.stringify({ date, name, codeNumber, storageLocation, memo }))
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ date, name, codeNumber, storageLocation, memo, noStock }))
     }, 500)
     return () => clearTimeout(timeout)
-  }, [date, name, codeNumber, storageLocation, memo])
+  }, [date, name, codeNumber, storageLocation, memo, noStock])
 
   function buildParams() {
     const params = new URLSearchParams()
@@ -54,6 +56,7 @@ export default function SearchBar() {
     if (codeNumber) params.set('code_number', codeNumber)
     if (storageLocation) params.set('storage_location', storageLocation)
     if (memo) params.set('memo', memo)
+    if (noStock) params.set('no_stock', 'true')
     return params
   }
 
@@ -70,6 +73,7 @@ export default function SearchBar() {
     setCodeNumber('')
     setStorageLocation('')
     setMemo('')
+    setNoStock(false)
     router.push('/search')
   }
 
@@ -111,6 +115,19 @@ export default function SearchBar() {
           <label className="block text-xs font-medium text-gray-500">メモ</label>
           <input type="text" value={memo} onChange={e => setMemo(e.target.value)} className={inputClass} />
         </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="no-stock"
+          checked={noStock}
+          onChange={e => setNoStock(e.target.checked)}
+          className="h-4 w-4 rounded border-gray-300 text-slate-800 focus:ring-slate-400"
+        />
+        <label htmlFor="no-stock" className="text-sm text-gray-700 cursor-pointer select-none">
+          在庫情報無
+        </label>
       </div>
 
       <div className="flex items-center justify-between pt-2 border-t border-gray-100">

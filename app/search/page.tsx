@@ -27,6 +27,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
   if (params.code_number) baseParams.set('code_number', params.code_number)
   if (params.storage_location) baseParams.set('storage_location', params.storage_location)
   if (params.memo) baseParams.set('memo', params.memo)
+  if (params.no_stock) baseParams.set('no_stock', params.no_stock)
 
   return (
     <div className="space-y-5">

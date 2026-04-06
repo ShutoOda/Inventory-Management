@@ -49,6 +49,44 @@ export async function searchInventory(params: SearchParams): Promise<SearchResul
 
   if (products.length === 0) return { items: [], total: 0 }
 
+  // 在庫情報無フィルタ（stock_records が存在しない製品のみ）
+  if (params.no_stock === 'true') {
+    const productIds = products.map(p => p.id)
+    const CHUNK = 100
+    const chunks: string[][] = []
+    for (let i = 0; i < productIds.length; i += CHUNK) {
+      chunks.push(productIds.slice(i, i + CHUNK))
+    }
+    const results = await Promise.all(
+      chunks.map(ids =>
+        supabase
+          .from('stock_records')
+          .select('product_id')
+          .in('product_id', ids)
+      )
+    )
+    const idsWithStock = new Set(results.flatMap(r => (r.data ?? []).map((row: { product_id: string }) => row.product_id)))
+    products = products.filter(p => !idsWithStock.has(p.id))
+
+    if (products.length === 0) return { items: [], total: 0 }
+
+    const total = products.length
+    const page = Math.max(1, Number(params.page) || 1)
+    const fromIdx = (page - 1) * PAGE_SIZE
+    const items = products.slice(fromIdx, fromIdx + PAGE_SIZE).map(p => ({
+      id: p.id,
+      name: p.name,
+      code_number: p.code_number,
+      storage_location: p.storage_location,
+      created_at: p.created_at,
+      updated_at: p.updated_at,
+      latest_date: null,
+      latest_memo: null,
+      latest_total: null,
+    }))
+    return { items, total }
+  }
+
   // Phase 2: 絞り込み後の製品IDのみ在庫レコードを取得
   type StockRow = { product_id: string; date: string | null; memo: string | null; total: number }
   const productIds = products.map(p => p.id)
