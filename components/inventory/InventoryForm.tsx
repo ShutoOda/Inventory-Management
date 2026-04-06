@@ -12,7 +12,7 @@ type RowData = {
   quantity: string   // 半角数字のみ（カンマなし）
   ng: string         // 半角数字のみ（カンマなし）
   total: number      // 自動計算
-  totalManual: string // 検済時の手動入力（空文字 = 自動計算を使用）
+  totalManual: string | null // 検済時の手動入力（null = 自動計算、'' = ユーザーが消した、'数値' = 手動入力）
   condition: string  // '検済' | '未検'
   shikake: string
   memo: string
@@ -52,7 +52,7 @@ function calcTotals(rows: RowData[]): RowData[] {
     const qty = Number(row.quantity) || 0
     const ng = row.status === '-' ? (Number(row.ng) || 0) : 0
     running = row.status === '+' ? running + qty : running - qty - ng
-    if (row.condition === '検済' && row.totalManual !== '') {
+    if (row.condition === '検済' && row.totalManual !== null && row.totalManual !== '') {
       const manual = Number(row.totalManual)
       if (!isNaN(manual)) {
         running = manual
@@ -101,7 +101,7 @@ export default function InventoryForm({ mode, product }: Props) {
       quantity: r.quantity === 0 ? '' : String(r.quantity),
       ng: r.ng === 0 ? '' : String(r.ng),
       total: r.total,
-      totalManual: r.condition === '検済' ? String(r.total) : '',
+      totalManual: r.condition === '検済' ? String(r.total) : null,
       condition: r.condition === '自由入力' ? '未検' : r.condition,
       shikake: r.shikake ?? '',
       memo: r.memo ?? '',
@@ -197,7 +197,7 @@ export default function InventoryForm({ mode, product }: Props) {
       if (r.clientId !== clientId) return r
       const updated = { ...r, [key]: value }
       if ((key === 'quantity' || key === 'ng' || key === 'status') && r.condition === '検済') {
-        updated.totalManual = ''
+        updated.totalManual = null
       }
       return updated
     }))
@@ -206,7 +206,7 @@ export default function InventoryForm({ mode, product }: Props) {
   function addRow() {
     setRows(prev => [...prev, {
       clientId: newClientId(), date: '', status: '-', quantity: '',
-      ng: '', total: 0, totalManual: '', condition: '未検', shikake: '', memo: '',
+      ng: '', total: 0, totalManual: null, condition: '未検', shikake: '', memo: '',
     }])
   }
 
@@ -466,7 +466,7 @@ export default function InventoryForm({ mode, product }: Props) {
                     <td className="px-1 py-1">
                       {row.condition === '検済' ? (
                         <input type="text" inputMode="numeric"
-                          value={row.totalManual !== '' ? formatNum(row.totalManual) : formatTotal(row.total)}
+                          value={row.totalManual !== null ? formatNum(row.totalManual) : formatTotal(row.total)}
                           onChange={e => updateRow(row.clientId, 'totalManual', toDigits(e.target.value))}
                           disabled={allDisabled}
                           className={`${cellInput} text-right`}
@@ -485,7 +485,7 @@ export default function InventoryForm({ mode, product }: Props) {
                             if (r.clientId !== row.clientId) return r
                             const totalManual = newCondition === '検済'
                               ? String(displayRows.find(d => d.clientId === row.clientId)?.total ?? r.total)
-                              : ''
+                              : null
                             return { ...r, condition: newCondition, totalManual }
                           }))
                         }}
