@@ -84,6 +84,7 @@ export default function InventoryForm({ mode, product }: Props) {
   const [pendingAction, setPendingAction] = useState<'create' | 'update' | 'delete' | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [deleted, setDeleted] = useState(false)
+  const [bulkRegistered, setBulkRegistered] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
 
   // 登録後に付与される ID（登録画面での登録成功後にセットされる）
@@ -126,7 +127,7 @@ export default function InventoryForm({ mode, product }: Props) {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null)
 
   const displayRows = useMemo(() => calcTotals(rows), [rows])
-  const allDisabled = deleted || isPending
+  const allDisabled = deleted || bulkRegistered || isPending
 
   const [longPressTooltip, setLongPressTooltip] = useState<{ text: string; x: number; y: number } | null>(null)
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -296,6 +297,7 @@ export default function InventoryForm({ mode, product }: Props) {
           setError(failed.error ?? '登録に失敗しました')
         } else {
           localStorage.removeItem('inventory-draft-new')
+          setBulkRegistered(true)
           setNotice(`${basicRows.length}件を登録しました`)
         }
       } else {
