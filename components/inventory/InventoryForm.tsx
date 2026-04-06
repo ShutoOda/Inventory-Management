@@ -61,14 +61,24 @@ function calcTotals(rows: RowData[]): RowData[] {
   return sorted.map(row => {
     const qty = Number(row.quantity) || 0
     const ng = row.status === '-' ? (Number(row.ng) || 0) : 0
-    running = row.status === '+' ? running + qty : running - qty - ng
-    if (row.condition === '検済' && row.totalManual !== null && row.totalManual !== '') {
-      const manual = Number(row.totalManual)
-      if (!isNaN(manual)) {
-        running = manual
-        return { ...row, total: manual }
+
+    if (row.condition === '検済') {
+      // 検済行: totalManualが設定されている場合はその値を総数とし、以降の行の基点（checkpoint）にする
+      // 設定されていない場合は算術計算した値を基点にする
+      if (row.totalManual !== null && row.totalManual !== '') {
+        const manual = Number(row.totalManual)
+        if (!isNaN(manual)) {
+          running = manual
+          return { ...row, total: manual }
+        }
       }
+      // totalManualが未設定（数量変更後など）: 検済行の総数を算術計算し、その値を次行の基点とする
+      running = row.status === '+' ? running + qty : running - qty - ng
+      return { ...row, total: running }
     }
+
+    // 未検行: 直前の検済checkpointを基点に算術計算
+    running = row.status === '+' ? running + qty : running - qty - ng
     return { ...row, total: running }
   })
 }
