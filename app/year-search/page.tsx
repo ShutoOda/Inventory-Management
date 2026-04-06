@@ -17,8 +17,8 @@ export default async function YearSearchPage({ searchParams }: PageProps) {
   const exportAll = params.all === 'true'
   const currentPage = Math.max(1, Number(params.page) || 1)
 
-  const { items, total } = searched && year && !exportAll
-    ? await searchByYear(year, currentPage)
+  const { items, total } = searched && year
+    ? await searchByYear(year, exportAll ? 1 : currentPage)
     : { items: [], total: 0 }
 
   const totalPages = Math.ceil(total / SEARCH_PAGE_SIZE)
@@ -61,7 +61,7 @@ export default async function YearSearchPage({ searchParams }: PageProps) {
               {!exportAll && totalPages > 1 && (
                 <span className="text-xs text-slate-400">{currentPage} / {totalPages} ページ</span>
               )}
-              <YearSearchExportButton year={year} disabled={!exportAll && total === 0} exportAll={exportAll} />
+              <YearSearchExportButton year={year} disabled={total === 0} exportAll={exportAll} />
             </div>
           </div>
           {!exportAll && (
