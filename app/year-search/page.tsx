@@ -64,6 +64,9 @@ export default async function YearSearchPage({ searchParams }: PageProps) {
               <YearSearchExportButton year={year} disabled={total === 0} exportAll={exportAll} />
             </div>
           </div>
+          {exportAll && total === 0 && (
+            <p className="px-5 py-10 text-center text-sm text-slate-400">該当するデータが見つかりませんでした</p>
+          )}
           {!exportAll && (
             <>
               <YearSearchResultTable items={items} />
