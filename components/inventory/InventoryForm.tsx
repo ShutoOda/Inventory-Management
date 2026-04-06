@@ -63,12 +63,11 @@ function calcTotals(rows: RowData[]): RowData[] {
     const ng = row.status === '-' ? (Number(row.ng) || 0) : 0
 
     if (row.condition === '検済' && row.totalManual !== null && row.totalManual !== '') {
-      // 検済行: totalManual（ユーザーが入力した基点値）± 数量・NG で総数を計算し、以降の基点にする
-      const base = Number(row.totalManual)
-      if (!isNaN(base)) {
-        const total = row.status === '+' ? base + qty : base - qty - ng
-        running = total
-        return { ...row, total }
+      // 検済行: ユーザーが入力した総数をそのまま使い、以降の行の基点にする
+      const manual = Number(row.totalManual)
+      if (!isNaN(manual)) {
+        running = manual
+        return { ...row, total: manual }
       }
     }
 
@@ -122,10 +121,7 @@ export default function InventoryForm({ mode, product }: Props) {
       quantity: r.quantity === 0 ? '' : String(r.quantity),
       ng: r.ng === 0 ? '' : String(r.ng),
       total: r.total,
-      // 検済行の totalManual は「基点値」= 最終総数 ∓ 数量 ∓ NG の逆算値
-      totalManual: r.condition === '検済'
-        ? (r.status === '+' ? String(r.total - r.quantity) : String(r.total + r.quantity + r.ng))
-        : null,
+      totalManual: r.condition === '検済' ? String(r.total) : null,
       condition: r.condition === '自由入力' ? '未検' : r.condition,
       shikake: r.shikake ?? '',
       memo: r.memo ?? '',
@@ -571,7 +567,11 @@ export default function InventoryForm({ mode, product }: Props) {
                     <td className="px-1 py-1">
                       {row.condition === '検済' ? (
                         <input type="text" inputMode="numeric"
-                          value={formatTotal(row.total)}
+                          value={
+                            row.totalManual === null ? formatTotal(row.total)
+                            : row.totalManual === '' ? ''
+                            : Number(row.totalManual).toLocaleString('ja-JP')
+                          }
                           onChange={e => updateRow(row.clientId, 'totalManual', toDigits(e.target.value))}
                           disabled={allDisabled}
                           className={`${cellInput} text-right`}
@@ -588,15 +588,9 @@ export default function InventoryForm({ mode, product }: Props) {
                           const newCondition = e.target.value
                           setRows(prev => prev.map(r => {
                             if (r.clientId !== row.clientId) return r
-                            let totalManual: string | null = null
-                            if (newCondition === '検済') {
-                              // 現在の算術計算済み総数から基点値を逆算（base ± qty ± ng = currentTotal）
-                              const currentTotal = displayRows.find(d => d.clientId === row.clientId)?.total ?? r.total
-                              const qty = Number(r.quantity) || 0
-                              const ng = r.status === '-' ? (Number(r.ng) || 0) : 0
-                              const base = r.status === '+' ? currentTotal - qty : currentTotal + qty + ng
-                              totalManual = String(base)
-                            }
+                            const totalManual = newCondition === '検済'
+                              ? String(displayRows.find(d => d.clientId === row.clientId)?.total ?? r.total)
+                              : null
                             return { ...r, condition: newCondition, totalManual }
                           }))
                         }}
