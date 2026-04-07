@@ -529,7 +529,7 @@ export default function InventoryForm({ mode, product }: Props) {
                 displayRows.map(row => (
                   <tr
                     key={row.clientId}
-                    onClick={() => !allDisabled && setSelectedRowId(row.clientId)}
+                    onPointerDown={() => !allDisabled && setSelectedRowId(row.clientId)}
                     className="cursor-pointer"
                     style={{
                       backgroundColor: displayRows.indexOf(row) % 2 === 0 ? '#fff0f3' : '#ffffff',
@@ -572,7 +572,16 @@ export default function InventoryForm({ mode, product }: Props) {
                       {row.condition === '検済' ? (
                         <input type="text" inputMode="numeric"
                           value={row.totalManual === '' ? '' : formatTotal(row.total)}
-                          onChange={e => updateRow(row.clientId, 'totalManual', toDigits(e.target.value))}
+                          onChange={e => {
+                            const raw = toDigits(e.target.value)
+                            if (raw === '') { updateRow(row.clientId, 'totalManual', ''); return }
+                            // ユーザーは最終総数を入力している。base ± qty ± ng = entered となるよう基点を逆算
+                            const entered = Number(raw)
+                            const qty = Number(row.quantity) || 0
+                            const ng = row.status === '-' ? (Number(row.ng) || 0) : 0
+                            const base = row.status === '+' ? entered - qty : entered + qty + ng
+                            updateRow(row.clientId, 'totalManual', String(base))
+                          }}
                           disabled={allDisabled}
                           className={`${cellInput} text-right`}
                           onKeyDown={handleEnterKey} />
