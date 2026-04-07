@@ -32,6 +32,18 @@ a[href^="tel"] {
   pointer-events: none;
 }
 
+/* Selected inventory row — use td borders instead of box-shadow (iOS Safari ignores box-shadow on tr in collapsed tables) */
+tr.row-selected td {
+  border-top: 2px solid #60a5fa !important;
+  border-bottom: 2px solid #60a5fa !important;
+}
+tr.row-selected td:first-child {
+  border-left: 2px solid #60a5fa !important;
+}
+tr.row-selected td:last-child {
+  border-right: 2px solid #60a5fa !important;
+}
+
 /* Hide Vercel toolbar in preview deployments */
 vercel-toolbar,
 #vercel-toolbar,

@@ -133,6 +133,7 @@ export default function InventoryForm({ mode, product }: Props) {
   )
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null)
+  const [editingTotalId, setEditingTotalId] = useState<string | null>(null)
 
   const displayRows = useMemo(() => calcTotals(rows), [rows])
   const allDisabled = deleted || bulkRegistered || isPending
@@ -530,11 +531,8 @@ export default function InventoryForm({ mode, product }: Props) {
                   <tr
                     key={row.clientId}
                     onPointerDown={() => !allDisabled && setSelectedRowId(row.clientId)}
-                    className="cursor-pointer"
-                    style={{
-                      backgroundColor: displayRows.indexOf(row) % 2 === 0 ? '#fff0f3' : '#ffffff',
-                      ...(selectedRowId === row.clientId ? { boxShadow: 'inset 0 0 0 2px #60a5fa' } : {}),
-                    }}
+                    className={`cursor-pointer${selectedRowId === row.clientId ? ' row-selected' : ''}`}
+                    style={{ backgroundColor: displayRows.indexOf(row) % 2 === 0 ? '#fff0f3' : '#ffffff' }}
                   >
                     <td className="px-1 py-1">
                       <input type="date" value={row.date}
@@ -571,17 +569,17 @@ export default function InventoryForm({ mode, product }: Props) {
                     <td className="px-1 py-1">
                       {row.condition === '検済' ? (
                         <input type="text" inputMode="numeric"
-                          value={row.totalManual === '' ? '' : formatTotal(row.total)}
+                          value={
+                            editingTotalId === row.clientId
+                              ? (row.totalManual ?? '')
+                              : (row.totalManual === '' ? '' : formatTotal(row.total))
+                          }
                           onChange={e => {
                             const raw = toDigits(e.target.value)
-                            if (raw === '') { updateRow(row.clientId, 'totalManual', ''); return }
-                            // ユーザーは最終総数を入力している。base ± qty ± ng = entered となるよう基点を逆算
-                            const entered = Number(raw)
-                            const qty = Number(row.quantity) || 0
-                            const ng = row.status === '-' ? (Number(row.ng) || 0) : 0
-                            const base = row.status === '+' ? entered - qty : entered + qty + ng
-                            updateRow(row.clientId, 'totalManual', String(base))
+                            updateRow(row.clientId, 'totalManual', raw)
                           }}
+                          onFocus={() => setEditingTotalId(row.clientId)}
+                          onBlur={() => setEditingTotalId(null)}
                           disabled={allDisabled}
                           className={`${cellInput} text-right`}
                           onKeyDown={handleEnterKey} />
