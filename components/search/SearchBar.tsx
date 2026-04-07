@@ -48,6 +48,18 @@ export default function SearchBar() {
     return () => clearTimeout(timeout)
   }, [date, name, codeNumber, storageLocation, memo, noStock])
 
+  function handleEnterKey(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== 'Enter') return
+    e.preventDefault()
+    const form = (e.currentTarget as HTMLElement).closest('form')
+    if (!form) return
+    const focusable = Array.from(
+      form.querySelectorAll<HTMLElement>('input[type="text"], input[type="date"]')
+    )
+    const idx = focusable.indexOf(e.currentTarget as HTMLElement)
+    if (idx >= 0 && idx < focusable.length - 1) focusable[idx + 1].focus()
+  }
+
   function buildParams() {
     const params = new URLSearchParams()
     params.set('searched', 'true')
@@ -89,13 +101,14 @@ export default function SearchBar() {
             type="date"
             value={date}
             onChange={e => setDate(e.target.value)}
+            onKeyDown={handleEnterKey}
             className={inputClass}
             style={{ WebkitAppearance: 'none', appearance: 'none' } as React.CSSProperties}
           />
         </div>
         <div className="flex-1 min-w-[140px]">
           <label className="block text-xs font-medium text-gray-500">製品名</label>
-          <input type="text" value={name} onChange={e => setName(e.target.value)} className={inputClass} />
+          <input type="text" value={name} onChange={e => setName(e.target.value)} onKeyDown={handleEnterKey} className={inputClass} />
         </div>
         <div className="flex-1 min-w-[140px]">
           <label className="block text-xs font-medium text-gray-500">コード番号</label>
@@ -104,16 +117,17 @@ export default function SearchBar() {
             value={codeNumber}
             onChange={e => setCodeNumber(e.target.value.replace(/[^\d-]/g, ''))}
             placeholder="半角数字・ハイフン"
+            onKeyDown={handleEnterKey}
             className={inputClass}
           />
         </div>
         <div className="w-28 shrink-0">
           <label className="block text-xs font-medium text-gray-500">保管場所</label>
-          <input type="text" value={storageLocation} onChange={e => setStorageLocation(e.target.value)} className={inputClass} />
+          <input type="text" value={storageLocation} onChange={e => setStorageLocation(e.target.value)} onKeyDown={handleEnterKey} className={inputClass} />
         </div>
         <div className="flex-1 min-w-[140px]">
           <label className="block text-xs font-medium text-gray-500">メモ</label>
-          <input type="text" value={memo} onChange={e => setMemo(e.target.value)} className={inputClass} />
+          <input type="text" value={memo} onChange={e => setMemo(e.target.value)} onKeyDown={handleEnterKey} className={inputClass} />
         </div>
       </div>
 

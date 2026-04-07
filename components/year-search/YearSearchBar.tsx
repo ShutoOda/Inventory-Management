@@ -93,6 +93,15 @@ export default function YearSearchBar() {
     return () => clearTimeout(timeout)
   }, [selectedYear, exportAll])
 
+  function handleEnterKey(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== 'Enter') return
+    e.preventDefault()
+    const form = (e.currentTarget as HTMLElement).closest('form')
+    if (!form) return
+    const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')
+    submit?.focus()
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     startTransition(() => {
@@ -120,6 +129,7 @@ export default function YearSearchBar() {
             type="checkbox"
             checked={exportAll}
             onChange={e => setExportAll(e.target.checked)}
+            onKeyDown={handleEnterKey}
             className="w-4 h-4 rounded border-gray-300 text-slate-800 focus:ring-slate-400"
           />
           <span className="text-sm text-gray-700">全て</span>

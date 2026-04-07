@@ -129,6 +129,7 @@ export default function InventoryForm({ mode, product }: Props) {
     })) ?? []
   )
 
+  const [selectedBasicRowId, setSelectedBasicRowId] = useState<string | null>(null)
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null)
   const [editingTotalId, setEditingTotalId] = useState<string | null>(null)
 
@@ -426,6 +427,8 @@ export default function InventoryForm({ mode, product }: Props) {
               {basicRows.map((r, i) => (
                 <tr
                   key={r.clientId}
+                  onPointerDown={() => setSelectedBasicRowId(r.clientId)}
+                  className={`cursor-pointer${selectedBasicRowId === r.clientId ? ' row-selected' : ''}`}
                   style={{ backgroundColor: i % 2 === 0 ? '#fff0f3' : '#ffffff' }}
                 >
                   <td className="px-1 py-1">
