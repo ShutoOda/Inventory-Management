@@ -414,7 +414,7 @@ export default function InventoryForm({ mode, product }: Props) {
           <table className="border-collapse text-sm" style={{ minWidth: 560 }}>
             <thead className="bg-gray-50">
               <tr>
-                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 200 }}>
+                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 400 }}>
                   製品名 <span className="text-red-500">*</span>
                 </th>
                 <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 160 }}>
