@@ -540,20 +540,14 @@ export default function InventoryForm({ mode, product }: Props) {
                   >
                     <td className="px-1 py-1">
                       <input type="date" value={row.date}
-                        onChange={e => {
-                          updateRow(row.clientId, 'date', e.target.value)
-                          if (e.target.value) advanceFocusInTable(e.currentTarget)
-                        }}
+                        onChange={e => updateRow(row.clientId, 'date', e.target.value)}
                         disabled={allDisabled} className={cellInput}
                         style={{ WebkitAppearance: 'none', appearance: 'none', minWidth: 0 } as React.CSSProperties}
                         onKeyDown={handleEnterKey} />
                     </td>
                     <td className="px-1 py-1">
                       <select value={row.status}
-                        onChange={e => {
-                          updateRow(row.clientId, 'status', e.target.value as '+' | '-')
-                          advanceFocusInTable(e.currentTarget)
-                        }}
+                        onChange={e => updateRow(row.clientId, 'status', e.target.value as '+' | '-')}
                         disabled={allDisabled} className={cellSelect}
                         onKeyDown={handleEnterKey}>
                         <option value="+">＋ 入庫</option>

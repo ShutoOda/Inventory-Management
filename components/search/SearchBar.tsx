@@ -104,10 +104,7 @@ export default function SearchBar() {
           <input
             type="date"
             value={date}
-            onChange={e => {
-              setDate(e.target.value)
-              if (e.target.value) advanceFocusInForm(e.currentTarget)
-            }}
+            onChange={e => setDate(e.target.value)}
             onKeyDown={handleEnterKey}
             className={inputClass}
             style={{ WebkitAppearance: 'none', appearance: 'none' } as React.CSSProperties}
