@@ -62,9 +62,11 @@ export default function YearSearchExportButton({ year, disabled, exportAll = fal
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="format-detection" content="telephone=no,address=no,email=no">
   <title>製品在庫年度別一覧 ${year}年度 全件</title>
   <style>
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    a { color: inherit; text-decoration: none; }
     body { font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif; font-size: 12px; margin: 20px; }
     h1 { font-size: 16px; margin-bottom: 4px; }
     .summary { font-size: 11px; color: #555; margin-bottom: 16px; }
@@ -102,9 +104,11 @@ export default function YearSearchExportButton({ year, disabled, exportAll = fal
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="format-detection" content="telephone=no,address=no,email=no">
   <title>製品在庫年度別一覧 ${year}年度</title>
   <style>
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    a { color: inherit; text-decoration: none; }
     body { font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif; font-size: 12px; margin: 20px; }
     h1 { font-size: 16px; margin-bottom: 4px; }
     p { font-size: 11px; color: #555; margin-bottom: 12px; }
