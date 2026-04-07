@@ -88,8 +88,8 @@ export default function YearSearchExportButton({ year, disabled, exportAll = fal
 
   function buildSummaryHtml(items: { date: string; code_number: string; product_name: string; total: number; condition: string; condition_text: string | null; shikake: string | null }[], year: number) {
     const period = `${year}/04/01 〜 ${year + 1}/03/31`
-    const rows = items.map(item => `
-      <tr>
+    const rows = items.map((item, ri) => `
+      <tr style="background-color:${ri % 2 === 0 ? '#fff0f3' : '#ffffff'}">
         <td>${item.date.replace(/-/g, '/')}</td>
         <td>${item.code_number}</td>
         <td>${item.product_name}</td>
@@ -104,6 +104,7 @@ export default function YearSearchExportButton({ year, disabled, exportAll = fal
   <meta charset="UTF-8">
   <title>製品在庫年度別一覧 ${year}年度</title>
   <style>
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     body { font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif; font-size: 12px; margin: 20px; }
     h1 { font-size: 16px; margin-bottom: 4px; }
     p { font-size: 11px; color: #555; margin-bottom: 12px; }
