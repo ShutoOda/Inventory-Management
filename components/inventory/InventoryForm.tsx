@@ -413,16 +413,16 @@ export default function InventoryForm({ mode, product }: Props) {
         </div>
 
         <div className="rounded-md border border-gray-200" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
-          <table className="border-collapse text-sm" style={{ minWidth: 560 }}>
+          <table className="border-collapse text-sm" style={{ minWidth: 560, width: '100%' }}>
             <thead className="bg-gray-50">
               <tr>
-                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 400 }}>
+                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ width: '60%', minWidth: 400 }}>
                   製品名 <span className="text-red-500">*</span>
                 </th>
-                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 160 }}>
+                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ width: '20%', minWidth: 160 }}>
                   コード番号 <span className="text-red-500">*</span>
                 </th>
-                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ minWidth: 160 }}>
+                <th className="border-b border-gray-200 px-2 py-2 text-left text-xs font-medium text-gray-600 whitespace-nowrap" style={{ width: '20%', minWidth: 160 }}>
                   保管場所 <span className="text-red-500">*</span>
                 </th>
               </tr>
