@@ -50,6 +50,16 @@ function formatTotal(n: number): string {
   return n.toLocaleString('ja-JP')
 }
 
+function advanceFocusInTable(el: HTMLElement) {
+  const table = el.closest('table')
+  if (!table) return
+  const focusable = Array.from(
+    table.querySelectorAll<HTMLElement>('input:not([disabled]):not([readonly]), select:not([disabled])')
+  )
+  const idx = focusable.indexOf(el)
+  if (idx >= 0 && idx < focusable.length - 1) focusable[idx + 1].focus()
+}
+
 function calcTotals(rows: RowData[]): RowData[] {
   const sorted = [...rows].sort((a, b) => {
     if (!a.date && !b.date) return 0
@@ -197,13 +207,7 @@ export default function InventoryForm({ mode, product }: Props) {
   function handleEnterKey(e: React.KeyboardEvent<HTMLInputElement | HTMLSelectElement>) {
     if (e.key !== 'Enter') return
     e.preventDefault()
-    const table = (e.currentTarget as HTMLElement).closest('table')
-    if (!table) return
-    const focusable = Array.from(
-      table.querySelectorAll<HTMLElement>('input:not([disabled]):not([readonly]), select:not([disabled])')
-    )
-    const idx = focusable.indexOf(e.currentTarget as HTMLElement)
-    if (idx >= 0 && idx < focusable.length - 1) focusable[idx + 1].focus()
+    advanceFocusInTable(e.currentTarget as HTMLElement)
   }
 
   // 編集モードで製品が存在しない（削除済みでもない）場合はエラー表示
@@ -536,14 +540,20 @@ export default function InventoryForm({ mode, product }: Props) {
                   >
                     <td className="px-1 py-1">
                       <input type="date" value={row.date}
-                        onChange={e => updateRow(row.clientId, 'date', e.target.value)}
+                        onChange={e => {
+                          updateRow(row.clientId, 'date', e.target.value)
+                          if (e.target.value) advanceFocusInTable(e.currentTarget)
+                        }}
                         disabled={allDisabled} className={cellInput}
                         style={{ WebkitAppearance: 'none', appearance: 'none', minWidth: 0 } as React.CSSProperties}
                         onKeyDown={handleEnterKey} />
                     </td>
                     <td className="px-1 py-1">
                       <select value={row.status}
-                        onChange={e => updateRow(row.clientId, 'status', e.target.value as '+' | '-')}
+                        onChange={e => {
+                          updateRow(row.clientId, 'status', e.target.value as '+' | '-')
+                          advanceFocusInTable(e.currentTarget)
+                        }}
                         disabled={allDisabled} className={cellSelect}
                         onKeyDown={handleEnterKey}>
                         <option value="+">＋ 入庫</option>

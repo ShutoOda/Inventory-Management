@@ -48,16 +48,20 @@ export default function SearchBar() {
     return () => clearTimeout(timeout)
   }, [date, name, codeNumber, storageLocation, memo, noStock])
 
+  function advanceFocusInForm(el: HTMLElement) {
+    const form = el.closest('form')
+    if (!form) return
+    const focusable = Array.from(
+      form.querySelectorAll<HTMLElement>('input[type="text"], input[type="date"], select:not([disabled])')
+    )
+    const idx = focusable.indexOf(el)
+    if (idx >= 0 && idx < focusable.length - 1) focusable[idx + 1].focus()
+  }
+
   function handleEnterKey(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key !== 'Enter') return
     e.preventDefault()
-    const form = (e.currentTarget as HTMLElement).closest('form')
-    if (!form) return
-    const focusable = Array.from(
-      form.querySelectorAll<HTMLElement>('input[type="text"], input[type="date"]')
-    )
-    const idx = focusable.indexOf(e.currentTarget as HTMLElement)
-    if (idx >= 0 && idx < focusable.length - 1) focusable[idx + 1].focus()
+    advanceFocusInForm(e.currentTarget as HTMLElement)
   }
 
   function buildParams() {
@@ -100,7 +104,10 @@ export default function SearchBar() {
           <input
             type="date"
             value={date}
-            onChange={e => setDate(e.target.value)}
+            onChange={e => {
+              setDate(e.target.value)
+              if (e.target.value) advanceFocusInForm(e.currentTarget)
+            }}
             onKeyDown={handleEnterKey}
             className={inputClass}
             style={{ WebkitAppearance: 'none', appearance: 'none' } as React.CSSProperties}
