@@ -483,24 +483,6 @@ export default function InventoryForm({ mode, product }: Props) {
       <section style={{ minWidth: 0 }}>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 pb-2">
           <h3 className="text-sm font-semibold text-gray-700">在庫情報</h3>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={addRow}
-              disabled={allDisabled || isMultiProduct}
-              className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              ＋ 行追加
-            </button>
-            <button
-              type="button"
-              onClick={removeSelectedRow}
-              disabled={allDisabled || !selectedRowId || isMultiProduct}
-              className="rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              － 行削除
-            </button>
-          </div>
         </div>
 
         <div className="rounded-md border border-gray-200" style={{ overflowX: 'auto', overflowY: 'auto', WebkitOverflowScrolling: 'touch', maxHeight: '384px' } as React.CSSProperties}>
@@ -640,6 +622,24 @@ export default function InventoryForm({ mode, product }: Props) {
               )}
             </tbody>
           </table>
+        </div>
+        <div className="mt-2 flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={addRow}
+            disabled={allDisabled || isMultiProduct}
+            className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            ＋ 行追加
+          </button>
+          <button
+            type="button"
+            onClick={removeSelectedRow}
+            disabled={allDisabled || !selectedRowId || isMultiProduct}
+            className="rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            － 行削除
+          </button>
         </div>
       </section>
 
