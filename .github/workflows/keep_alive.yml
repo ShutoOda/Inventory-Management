@@ -2,11 +2,12 @@ name: Supabase Keep Alive
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 毎日 09:00 JST (00:00 UTC)
+    - cron: '0 0 * * *'  # 毎日 09:00 JST (00:00 UTC) - Supabase ping
+    - cron: '0 0 1 * *'  # 毎月1日 09:00 JST - 自動コミット
   workflow_dispatch:      # 手動実行も可能
 
 jobs:
-  keep-alive:
+  ping:
     runs-on: ubuntu-latest
     steps:
       - name: Ping Supabase
@@ -14,3 +15,19 @@ jobs:
           curl -s "${{ secrets.SUPABASE_URL }}/rest/v1/" \
             -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}"
+
+  auto-commit:
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 0 1 * *' || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update keep-alive timestamp
+        run: |
+          echo "$(date -u '+%Y-%m-%d %H:%M:%S UTC')" > .github/keep-alive.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/keep-alive.txt
+          git commit -m "chore: monthly keep-alive $(date -u '+%Y-%m')"
+          git push
