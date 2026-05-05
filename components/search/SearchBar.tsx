@@ -157,24 +157,24 @@ export default function SearchBar() {
           >
             リセット
           </button>
-          <Link
-            href="/inventory"
-            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+          <button
+            type="submit"
+            disabled={isPending}
+            className="flex items-center gap-2 rounded-lg bg-slate-800 px-5 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-60"
           >
-            新規追加
-          </Link>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" strokeWidth="2" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35" />
+            </svg>
+            {isPending ? '検索中...' : '検索'}
+          </button>
         </div>
-        <button
-          type="submit"
-          disabled={isPending}
-          className="flex items-center gap-2 rounded-lg bg-slate-800 px-5 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-60"
+        <Link
+          href="/inventory"
+          className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <circle cx="11" cy="11" r="8" strokeWidth="2" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35" />
-          </svg>
-          {isPending ? '検索中...' : '検索'}
-        </button>
+          新規追加
+        </Link>
       </div>
     </form>
   )
