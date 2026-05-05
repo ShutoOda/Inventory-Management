@@ -402,7 +402,10 @@ export default function InventoryForm({ mode, product }: Props) {
               </button>
               <button
                 type="button"
-                onClick={() => basicRows.length > 1 && removeBasicRow(basicRows[basicRows.length - 1].clientId)}
+                onClick={() => {
+                  const idToRemove = selectedBasicRowId ?? basicRows[basicRows.length - 1].clientId
+                  if (basicRows.length > 1) removeBasicRow(idToRemove)
+                }}
                 disabled={allDisabled || basicRows.length <= 1}
                 className="rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
               >
