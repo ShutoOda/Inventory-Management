@@ -149,6 +149,12 @@ export default function SearchBar() {
       </div>
 
       <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+        <Link
+          href="/inventory"
+          className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+        >
+          新規追加
+        </Link>
         <div className="flex gap-2">
           <button
             type="button"
@@ -169,12 +175,6 @@ export default function SearchBar() {
             {isPending ? '検索中...' : '検索'}
           </button>
         </div>
-        <Link
-          href="/inventory"
-          className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
-        >
-          新規追加
-        </Link>
       </div>
     </form>
   )
