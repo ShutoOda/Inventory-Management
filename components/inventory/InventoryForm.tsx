@@ -653,15 +653,15 @@ export default function InventoryForm({ mode, product }: Props) {
           className="rounded-md bg-red-600 px-5 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-30">
           {pendingAction === 'delete' ? '削除中...' : '削除'}
         </button>
-        <button type="button" onClick={handleUpdate}
-          disabled={!isEdit || allDisabled}
-          className="rounded-md bg-green-600 px-5 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-30">
-          {pendingAction === 'update' ? '更新中...' : '更新'}
-        </button>
         <button type="button" onClick={handleCreate}
           disabled={!isCreate || allDisabled}
           className="rounded-md bg-green-600 px-5 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-30">
           {pendingAction === 'create' ? '登録中...' : '登録'}
+        </button>
+        <button type="button" onClick={handleUpdate}
+          disabled={!isEdit || allDisabled}
+          className="rounded-md bg-green-600 px-5 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-30">
+          {pendingAction === 'update' ? '更新中...' : '更新'}
         </button>
       </div>
     </div>
